@@ -368,7 +368,8 @@
         <p>
             For each experiment, we initialize the particles for the estimators via the deterministic Sobol sequence on
             the intervals specified through the parameter limits. Our code uses the Sobol sequence implementation
-            from~\citet{burkardt2021sobol} which is based on a Fortran77 implementation by~\citet{bennett1986sobol}.
+            from Burkardt [<a href="#sec:references">1</a>] which is based on a Fortran77 implementation by Fox [<a
+                href="#sec:references">2</a>].
             For the MCMC methods that sample a single Markov chain, we used the center point between the parameter
             limits as initial guess.
         </p>
@@ -416,9 +417,9 @@
             The consequence of using these likelihoods can be seen in the following figure where
             $p_{product}$ shows the resulting posterior distribution (in parameter space) when
             treating a set of trajectories as independent and taking the product of their likelihoods
-            (\autoref{eq:traj_likelihood_prod}), while \autoref{fig:double-pendulum-sum} shows the result of treating
-            them as a sum of Gaussian likelihoods (\autoref{eq:traj_likelihood_sum}).
-            In \autoref{fig:double-pendulum-prod} the posterior becomes the average of the two distributions since that
+            (Equation (2)), while <a href="#fig:double-pendulum-sum">Figure 1 (b)</a> shows the result of treating
+            them as a sum of Gaussian likelihoods (Equation (1)).
+            In <a href="#fig:double-pendulum-prod">Figure 1 (a)</a> the posterior becomes the average of the two distributions since that
             is the most likely position that generated both of the distinct trajectories. In contrast, the posterior
             approximated by the same algorithm (CSVGD) but using the sum of Gaussian likelihoods, successfully captures
             the multimodality in the trajectory space since most particles have aligned near the two modes of the true
@@ -491,9 +492,10 @@
             Instead, we use an approximation to the KL divergence which uses the relative distances between samples in a
             set to estimate the KL divergence between particle distributions.
             This method has been used to compare particle distributions over robot poses to asses the performance of
-            particle filter distributions~\cite{chou_performance_2011}.
+            particle filter distributions [<a href="#sec:references">3</a>].
             To estimate the KL divergence between particle distributions over trajectories $\trajectoryset^{p}$ and
-            $\trajectoryset^{q}$ we adopt the formulation from~\cite{wang_divergence_2009, chou_performance_2011}:
+            $\trajectoryset^{q}$ we adopt the formulation from [<a href="#sec:references">4</a>,<a
+                href="#sec:references">3</a>]:
             $$
             \begin{equation}
             \tilde{d}_{KL} (\trajectoryset^{p} \parallel \trajectoryset^{q}) =
@@ -529,8 +531,8 @@
             dynamical system or simulator for which its parameters need to be estimated.
             For our experiments, we use the <em><a
                     href="https://github.com/google-research/tiny-differentiable-simulator" target="_blank">Tiny
-                    Differentiable Simulator</a></em>~\cite{heiden2021neuralsim} that implements end-to-end
-            differentiable contact models and the Articulated Body Algorithm (ABA)~\cite{featherstone2007rbda} to
+                    Differentiable Simulator</a></em> [<a href="#sec:references">5</a>] that implements end-to-end
+            differentiable contact models and the Articulated Body Algorithm (ABA) [<a href="#sec:references">6</a>] to
             compute the forward dynamics (FD) for articulated rigid-body mechanisms. Given joint positions $\jointpos$,
             velocities $\jointvel$, torques $\jointtorque$ in generalized coordinates, and external forces
             $\externalforce$, ABA calculates the joint accelerations $\jointacc$.
@@ -545,7 +547,7 @@
             $$
         </p>
         <p>
-            The second-order ODE described by \autoref{eq:dynamics} is lowered to a first-order system, with state
+            The second-order ODE described by Equation (4) is lowered to a first-order system, with state
             $\statevec_t = \begin{bmatrix}\jointpos_t & \jointvel_t\end{bmatrix}$. Furthermore, we deal primarily with
             the discrete
             time-stepped dynamics function
@@ -562,25 +564,25 @@
             contact friction coefficients. Given $\frac{\partial \fstep}{\partial\params}$ and
             $\frac{\partial\fstep}{\partial\statevec}$, gradients of simulation parameters with respect to the state
             trajectories can be computed directly through the chain rule, or via the adjoint sensitivity
-            method~\cite{pontryagin2018mathematical}.
+            method [<a href="#sec:references">7</a>].
         </p>
 
 
         <h4 id="sec:ibm-pendulum">2.2 Identify Real-world Double Pendulum</h4>
         <p>
             We set up the double pendulum estimation experiment with the 11 parameters shown in
-            \autoref{tab:params-ibm-pendulum} to be estimated. The state space consists of the two positions and
+            <a href="#tab:params-ibm-pendulum">Table 1</a> to be estimated. The state space consists of the two positions and
             velocities of both joints: $\statevec = \begin{bmatrix}\mathbf{q}_{0:1} &
             \mathbf{\dot{q}}_{0:1}\end{bmatrix}$. The dataset of
             trajectories contains image sequences (see time lapse of an excerpt from a trajectory in
-            \autoref{tab:dataset-ibm-pendulum}) and annotated pixel coordinates of the three vertices in the double
+            <a href="#fig:ibm-pendulum-timelapse">Figure 2</a>) and annotated pixel coordinates of the three vertices in the double
             pendulum, from which we extracted joint positions and velocities (via finite differencing given the known
             recording frequency of 400Hz).
 
         </p>
 
         <div class="row">
-            <div class="col-md-8">
+            <div class="col-md-8" id="tab:params-ibm-pendulum">
                 <table class="table">
                     <thead>
                         <tr>
@@ -673,7 +675,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4" id="fig:ibm-pendulum-timelapse">
                 <img src="img/ibm_pendulum/ibm-pendulum-timelapse.png" alt="IBM Pendulum" class="img-fluid" />
             </div>
         </div>
@@ -686,17 +688,17 @@
             </div>
             <div class="col-md-4">
                 <p><b>Figure 2.</b> Time lapse of a double pendulum trajectory from the IBM
-                    dataset~\cite{asseman2018learning}.</p>
+                    dataset [<a href="#sec:references">8</a>].</p>
             </div>
         </div>
         <p>
             Since we know that all trajectories in this dataset stem from the same double
-            pendulum~\cite{asseman2018learning}, we only used a single reference trajectory as target trajectory
+            pendulum [<a href="#sec:references">8</a>], we only used a single reference trajectory as target trajectory
             $\trajectory\real$ during the estimation. We let each estimator run for 2000 iterations. For evaluation, we
             calculate the consistency metrics from Tab.~1 of the main paper over 10 held-out trajectories from a test
             dataset. For comparison, we visualize the trajectory density over simulations rolled out from the last 100
             Markov samples (or 100 particles in the case of particle-based approaches) in
-            \autoref{fig:ibm-pendulum-rollouts}. The ground-truth shown in these plots again stems from the unseen test
+            <a href="#fig:ibm-pendulum-rollouts">Figure 3</a>. The ground-truth shown in these plots again stems from the unseen test
             dataset. This experiment further demonstrates the generalizability of simulation-based inference, which,
             when an adequate model has been implemented and its parameters identified, can predict outcomes under
             various novel conditions even though the training dataset consisted of only a single trajectory in this
@@ -754,7 +756,7 @@
                 <p>
                     <b>Figure 3.</b> Kernel density estimation over trajectory roll-outs from the last estimated 100
                     parameter guesses of each method, applied to the physical double pendulum dataset from
-                    \autoref{sec:ibm-pendulum}. The ground-truth trajectory here stems from the test dataset of 10
+                    <a href="#sec:ibm-pendulum">Section 2.2</a>. The ground-truth trajectory here stems from the test dataset of 10
                     trajectories that were held out during training. The particle-based approaches (CEM, SVGD, CSVGD)
                     use 100 particles.
                 </p>
@@ -786,7 +788,7 @@
             augmented by the shooting variables $\statevec_t^s$.
         </p>
         <p>
-            As shown in \autoref{tab:ms-baselines}, the MCMC approaches Emcee and NUTS do not benefit
+            As shown in <a href="#tab:ms-baselines">Table 2</a>, the MCMC approaches Emcee and NUTS do not benefit
             meaningfully from
             the multiple-shooting approach. Emcee often yields unstable simulations from which we are not able
             to
@@ -794,11 +796,10 @@
             significant challenge to these methods, which are known to scale poorly to higher dimensions.
             Despite being configured to use a Gaussian mixture model of 3 kernels, the CEM posterior immediately
             collapses to a single point such that the KL divergence of simulated against real trajectories
-            cannot be
-            computed.
+            cannot be computed.
         </p>
 
-        <table class="table numbers">
+        <table class="table numbers" id="tab:ms-baselines">
             <thead>
                 <tr>
                     <th scope="col"></th>
@@ -868,17 +869,17 @@
         </table>
         <p>
             <b>Table 2.</b> Consistency metrics of the posterior distributions approximated from the physical
-            double pendulum dataset (\autoref{sec:ibm-pendulum}) by the different estimation algorithms using the
-            single-shooting likelihood $p_{ss}(\trajectory\real | \params)$ (column ``SS'') and the
+            double pendulum dataset (<a href="#sec:ibm-pendulum">Section 2.2</a>) by the different estimation algorithms using the
+            single-shooting likelihood $p_{ss}(\trajectory\real | \params)$ (column "SS") and the
             multiple-shooting
-            likelihood $p_{ms}(\trajectory\real | \params)$ (column ``MS'') with 10 shooting windows. Note that
+            likelihood $p_{ms}(\trajectory\real | \params)$ (column "MS") with 10 shooting windows. Note that
             SVGD with multiple-shooting corresponds to CSVGD.
         </p>
 
         <p>
             We observe a significant improvement in estimation accuracy on SGLD, where the multiple-shooting
             approach
-            allowed it to converge to closely matching trajectories, as shown in \autoref{fig:sgld-ms}. As with
+            allowed it to converge to closely matching trajectories, as shown in <a href="#fig:sgld-ms">Figure 4</a>. As with
             SVGD,
             the availability of gradients allows this method to scale better to the higher dimensional parameter
             space,
@@ -893,8 +894,8 @@
                 <p>
                     <b>Figure 4.</b> Kernel density estimation over trajectory roll-outs from the last estimated 100
                     parameter guesses of SGLD with the multiple-shooting likelihood model (see
-                    \autoref{sec:exp-multiple-shooting}), applied to the physical double pendulum dataset from
-                    \autoref{sec:ibm-pendulum}. Similarly to SVGD, SGLD benefits significantly from the smoother
+                    <a href="#sec:exp-multiple-shooting">Section 2.3</a>), applied to the physical double pendulum dataset from
+                    <a href="#sec:ibm-pendulum">Section 2.2</a>. Similarly to SVGD, SGLD benefits significantly from the smoother
                     likelihood function while being able to cope with the augmented parameter space thanks to its
                     gradient-based approach.
                 </p>
@@ -907,7 +908,8 @@
             Our Bayesian inference approach leverages the simulator as part of the likelihood model to
             approximate posterior distributions over simulation parameters, which means the simulator is indispensable
             in our estimation process}. In the following, we compare our approach against the likelihood-free inference
-            approach BayesSim~\cite{ramos_bayessim_2019} that leverages approximate Bayesian computation (ABC) which is
+            approach BayesSim [<a href="#sec:references">9</a>] that leverages approximate Bayesian computation (ABC)
+            which is
             the most popular family of algorithms within likelihood-free methods.
         </p>
 
@@ -916,7 +918,8 @@
             setting. Instead of querying the simulator to evaluate the likelihood (as in our approach), a conditional
             density $q(\params | \trajectoryset)$ is learned directly from a dataset of simulation parameters and their
             corresponding rolled-out trajectories via supervised learning to approximate the posterior. A common choice
-            of model for such density is a mixture density network~\cite{bishop1994mixture}, which parameterizes a
+            of model for such density is a mixture density network [<a href="#sec:references">10</a>], which
+            parameterizes a
             Gaussian mixture model. This is in contrast to our (C)SVGD algorithm which can approximate
             any shape of posterior by being a nonparametric inference algorithm.
         </p>
@@ -935,7 +938,7 @@
             The input to the learned density model has to be a sufficient statistic of the underlying data, while being
             low-dimensional in order to keep the learning problem computationally tractable. We consider the following
             four methods of processing the trajectories that are the input to the likelihood-free methods, as
-            visualized for an example trajectory in \autoref{fig:bayessim-inputs}. Note that we configured the following
+            visualized for an example trajectory in <a href="#fig:bayessim-inputs">Figure 5</a>. Note that we configured the following
             input processing methods to generate a one-dimensional input vector that has a reasonable length to be
             computationally feasible to train on (given the 10,000 trajectories from the training dataset), while
             achieving acceptable performance which we validated through testing various settings.
@@ -943,13 +946,14 @@
 
         <p>
             <b>Downsampled:</b> we down-sample the trajectory so that for the double pendulum experiment
-            (\autoref{sec:ibm-pendulum}) we use only every 20th state, for the Panda arm experiment
-            (\autoref{sec:panda-box}) only every 200-th state of the trajectory. Finally, the state dimensions per
+            (<a href="#sec:ibm-pendulum">Section 2.2</a>) we use only every 20th state, for the Panda arm experiment
+            (<a href="#sec:panda-box">Section 2.5</a>) only every 200-th state of the trajectory. Finally, the state dimensions per
             trajectory are concatenated to a one-dimensional vector.
         </p>
         <p>
-            <b>Difference:</b> we adapt the input statistic from the original BayesSim approach in \cite[Eq.
-            (22)]{ramos_bayessim_2019} where the differences of two consecutive states along the trajectory are used in
+            <b>Difference:</b> we adapt the input statistic from the original BayesSim approach in [<a
+                href="#sec:references">9</a>, Eq. (22)] where the differences of two consecutive states along the
+            trajectory are used in
             concatenation with their mean and variance:
             $$
             \psi(\trajectory) = (\operatorname{downsample}(\tau), \mathbb{E}[\tau], \operatorname{Var}[\tau])
@@ -966,7 +970,8 @@
             trajectory.
         </p>
         <p>
-            <b>Signature:</b> we compute the signature transform from the signatory package~\cite{kidger2021signatory}
+            <b>Signature:</b> we compute the signature transform from the signatory package [<a
+                href="#sec:references">11</a>]
             over the input trajectory. Such so-called path signatures have been recently introduced to extract
             information about order and area, thereby preserving features inherent to nonlinear trajectories. We select
             a depth for the signature transform of 3 for the double pendulum experiment, and 2 for the Panda arm
@@ -999,8 +1004,8 @@
         </div>
         <p>
             <b>Figure 5.</b> Exemplary visualization of the input processing methods for the likelihood-free baselines
-            from \autoref{sec:likelihoodfree} applied to a trajectory from the double pendulum experiment in
-            \autoref{sec:ibm-pendulum}.
+            from <a href="#sec:likelihoodfree">Section 2.4</a> applied to a trajectory from the double pendulum experiment in
+            <a href="#sec:ibm-pendulum">Section 2.2</a>.
         </p>
 
         <h5 id="sec:bayessim-model">2.4.2 Density Model</h5>
@@ -1017,17 +1022,18 @@
             a kernel. We evaluate the MDRFF with the following common choices for the kernel:
         <ul>
             <li> Radial Basis Function (<b>RBF</b>) kernel </li>
-            <li> <b>Matérn</b> kernel~\cite[Equation (4.14)]{rasmussen2005gp} with $\nu=\frac{5}{2}$ </li>
+            <li> <b>Matérn</b> kernel [<a href="#sec:references">12</a>, Eq. (4.14)] with $\nu=\frac{5}{2}$ </li>
         </ul>
 
         <h5 id="sec:bayessim-eval">2.4.3 Evaluation</h5>
         <p>
             Note that instead of action generation, which is part of the proposed BayesSim
-            pipeline~\cite{ramos_bayessim_2019}, we only focus on the inference of the posterior density over simulation
+            pipeline [<a href="#sec:references">9</a>], we only focus on the inference of the posterior density over
+            simulation
             parameters in order to compare such likelihood-free inference approach against our method.
         </p>
         <p>
-            To evaluate the metrics shown in \autoref{tab:likelihoodfree-results} for each BayesSim
+            To evaluate the metrics shown in <a href="#tab:likelihoodfree-results">Table 2</a> for each BayesSim
             instantiation (input method and density model), we sample 100 parameter vectors from the learned
             posterior $q(\params | \trajectoryset)$ and simulate them to obtain 100 trajectories which are compared
             against the reference trajectory sets, as we did in the comparison for the other Bayesian inference methods
@@ -1249,8 +1255,8 @@
         <p>
             <b>Figure 6.</b> Kernel density estimation over trajectory roll-outs from 100 parameter samples drawn from
             the posterior of each BayesSim method (model name with kernel choice in bold font + input method, see
-            \autoref{sec:likelihoodfree}), applied to the physical double pendulum dataset from
-            \autoref{sec:ibm-pendulum}. The ground-truth trajectory here stems from the test dataset of 10 trajectories
+            <a href="#sec:likelihoodfree">Section 2.4</a>), applied to the physical double pendulum dataset from
+            <a href="#sec:ibm-pendulum">Section 2.2</a>. The ground-truth trajectory here stems from the test dataset of 10 trajectories
             that were held out during training.
         </p>
 
@@ -1258,13 +1264,13 @@
 
         <p>
             The results from our experiments with the various likelihood-free approaches in
-            \autoref{tab:likelihoodfree-results} indicate that, among the tested pipelines, the MDRFF model with Matérn
+            <a href="#tab:likelihoodfree-results">Table 2</a> indicate that, among the tested pipelines, the MDRFF model with Matérn
             kernel and downsampled trajectory input overall performed the strongest, followed by the MDN with
             downsampled input. In comparison to the likelihood-based algorithms from Tab.~1 of the main paper, these
             results are comparable on the double pendulum experiment. However, in comparison to CSVGD, the estimated
             likelihood-free posteriors are significantly less accurate, which can also be clearly seen in the density
             plots over the rolled out trajectories from such learned densities in
-            \autoref{fig:ibm-pendulum-rollouts-bayessim}. On the Panda arm experiment, the likelihood-free methods are
+            <a href="#fig:ibm-pendulum-rollouts-bayessim">Figure 6</a>. On the Panda arm experiment, the likelihood-free methods are
             outperformed by the likelihood-based algorithms (such as the Emcee sampler) more often on the likelihood of
             the learned parameter densities. CSVGD again achieves a much more accurate posterior in this experiment than
             any likelihood-free approach.
@@ -1274,26 +1280,28 @@
         </p>
         <p>
             One would expect that this kind of dynamical system poses no greater challenge to BayesSim when it was shown
-            to identify a cartpole's link length and cart mass successfully~\cite{ramos_bayessim_2019}. To investigate
-            this problem, we revisit the simplified double pendulum estimation experiment from Sec.~{5.1} of our main
+            to identify a cartpole's link length and cart mass successfully [<a href="#sec:references">9</a>]. To
+            investigate
+            this problem, we revisit the simplified double pendulum estimation experiment from Sec. 5.1 of our main
             paper, where only the two link lengths need to be estimated from simulated trajectories. As before, we
             create a dataset with 10,000 trajectories of 400 time steps based on the two simulation parameters sampled
-            from a uniform distribution ranging between \SI{0.5}{\meter} and \SI{5}{\meter}. While keeping all
+            from a uniform distribution ranging between 0.5m and 5m. While keeping all
             parameters the same as in our previous double-pendulum experiment where eleven parameters had to be
-            inferred, all of the density models in combination with both the ``difference'' and ``downsampled'' input
+            inferred, all of the density models in combination with both the "difference" and "downsampled" input
             statistic infer a highly accurate parameter distribution, as shown in
-            \autoref{fig:bayessim-twoparam-posterior}. The trajectories produced by sampling from the BayesSim posterior
-            (\autoref{fig:bayessim-twoparam-trajectories}) also match the reference observations much more closely than
+            <a href="#fig:bayessim-twoparam-posterior">Figure 7 (a)</a>. The trajectories produced by sampling from the BayesSim posterior
+            (<a href="#fig:bayessim-twoparam-trajectories">Figure 7 (b)</a>) also match the reference observations much more closely than
             any of the BayesSim models on the previous 11-parameter double
-            pendulum~(\autoref{fig:ibm-pendulum-rollouts-bayessim}). These results suggest that BayesSim and potentially
+            pendulum~(<a href="#fig:ibm-pendulum-rollouts-bayessim">Figure</a>). These results suggest that BayesSim and potentially
             other likelihood-free method have problems in inferring higher dimensional parameter distributions. The
-            experiments in \citet{ramos_bayessim_2019} demonstrated as many as four parameters being estimated (for the
+            experiments in [<a href="#sec:references">9</a>] demonstrated as many as four parameters being estimated
+            (for the
             acrobot), while showing inference results for simulated systems only. While our double pendulum system from
-            \autoref{sec:ibm-pendulum} is basic in principle, the higher dimensional parameter space (see parameters in
-            \autoref{tab:params-ibm-pendulum}) and the fact that we need to fit against real-world data makes it a
+            <a href="#sec:ibm-pendulum">Section 2.2</a> is basic in principle, the higher dimensional parameter space (see parameters in
+            <a href="#tab:params-ibm-pendulum">Table 1</a>) and the fact that we need to fit against real-world data makes it a
             significantly harder problem for most state-of-the-art inference algorithms. CSVGD is able to achieve a
             close fit thanks to the multiple-shooting segmentation of the trajectory which improves the convergence (see
-            more ablation results for multiple-shooting on this experiment in \autoref{sec:exp-multiple-shooting}).
+            more ablation results for multiple-shooting on this experiment in <a href="#sec:exp-multiple-shooting">Section 2.3</a>).
         </p>
 
         <div class="row">
@@ -1315,7 +1323,7 @@
                 <p>
                     <b>Figure 7.</b> Results from BayesSim on the simplified double pendulum experiment where only the
                     two link lengths need to be inferred. (a) shows the approximated posterior distribution by the MDN
-                    model and ``downsampled'' input statistics. The diagonal plots show the marginal parameter
+                    model and "downsampled" input statistics. The diagonal plots show the marginal parameter
                     distributions, the bottom-left heatmap and the top-right contour plot show the 2D posterior where
                     the ground-truth parameters at (1.5m, 2m) are indicated by a red star. The
                     black dots in the top-right plot are 100 parameters sampled from the posterior which are rolled out
@@ -1335,18 +1343,19 @@
             \mathbf{\dot{q}}^d_{0:6}\end{bmatrix}$
             consisting of nine joint positions and velocities, plus the PD control position and velocity targets,
             $\mathbf{q}^d$ and $\mathbf{\dot{q}}^d$, for the actuated joints of the robot arm. We control the arm using
-            the <em>MoveIt!</em> motion planning framework~\cite{coleman_david_reducing_2014} by moving joints 6 and 7
+            the <em>MoveIt!</em> motion planning framework [<a href="#sec:references">13</a>] by moving joints 6 and 7
             to
             predefined joint-space offsets of $0.1$ and $-0.1$ radians, in sequence. We use the default Iterative
             Parabolic Time Parameterization algorithm with a velocity scaling factor of $0.1$. We track the motion of
             the acrylic box via a Vicon motion capture system and derive four Cartesian coordinates as observation
             $\observationvec=\begin{bmatrix}\mathbf{p}_{o} & \mathbf{p}_{x} & \mathbf{p}_{y} &
             \mathbf{p}_{z}\end{bmatrix}$ to represent the
-            frame of the box (shown in \autoref{fig:panda-markers}): a point of origin located at the center of the
+            frame of the box (shown in <a href="#fig:panda-markers">Figure 8</a>): a point of origin located at the center of the
             upper lid of the box, and three points located 1m away from the origin into the x, y, and z
             direction (transformed by the reference frame of the box). We chose this state representation to ease the
             computation of the likelihood, since we only need to compute differences between 3D points instead of
-            computing the distances over 3D rotations which requires special treatment~\cite{huynh2009metrics}.
+            computing the distances over 3D rotations which requires special treatment [<a
+                href="#sec:references">14</a>].
         </p>
         <div class="row" id="fig:panda-markers">
             <div class="col"></div>
@@ -1354,7 +1363,7 @@
                 <img src="img/panda/panda_sim_markers.png" class="img-fluid" />
                 <p>
                     <b>Figure 8.</b> Rendering of the simulation for the underactuated mechanism from
-                    \autoref{sec:panda-box}, where the four reference points for the origin, unit x, y, and z vectors
+                    <a href="#sec:panda-box">Section 2.5</a>, where the four reference points for the origin, unit x, y, and z vectors
                     are shown. The trace of the simulated trajectory is visualized by the solid lines, the ground-truth
                     trajectories of the markers are shown as dotted lines.
                 </p>
@@ -1363,20 +1372,20 @@
         </div>
         <p>
             We first identify the simulation parameters pertaining to the inertial properties of the box and the
-            friction parameters of the universal joint. As shown in \autoref{tab:params-panda-box-phase1}, the symmetric
+            friction parameters of the universal joint. As shown in <a href="#tab:params-panda-box-phase1">Table 3 (a)</a>, the symmetric
             inertia matrix of the box is fully determined by the first six parameters, followed by the 3D center of
             mass. We have measured the mass to be 920g, so we do not need to estimate it. We simulate the
             universal joint with velocity-dependent damping, with possibly different friction coefficients for both
             degrees of freedom. The simulation parameters yielding the most accurate fit to a ground-truth trajectory
-            from the physical robot shaking an empty box is shown in \autoref{fig:panda-box-trajectory}. We were able to
+            from the physical robot shaking an empty box is shown in <a href="#fig:panda-box-trajectory">Figure 9</a>. We were able to
             find such parameters via SVGD, CSVGD and Emcee (shown is a parameter configuration from the particle
             distribution estimated by CSVGD with the highest likelihood).
         </p>
 
         <p>
             While the simulated trajectory matches the real data significantly better after the inertial parameters of
-            the empty box have been identified (\autoref{fig:panda-box-trajectory-after}) than before
-            (\autoref{fig:panda-box-trajectory-before}), a reality gap remains. We believe this to be a result from a
+            the empty box have been identified (<a href="#fig:panda-box-trajectory-after">Figure 9 (b)</a>) than before
+            (<a href="#fig:panda-box-trajectory-before">Figure (a)</a>), a reality gap remains. We believe this to be a result from a
             slight modeling error that the rigid body simulator cannot capture, e.g. the top of the box where the
             universal joint is attached bends slightly while the box is moving, and there may be slight geometric
             offsets between the real system and the model of it we use in the simulator. The latter parameters could
@@ -1384,22 +1393,22 @@
             is sufficient to be used in the next phase of the inference experiment.
         </p>
 
-        <div class="row">
-            <div class="col-6">
+        <div class="row" id="fig:panda-box-trajectory">
+            <div class="col-6" id="fig:panda-box-trajectory-before">
                 <img src="img/panda/panda_box_initial_trajectory.png" class="img-fluid" />
                 <p style="text-align: center;">(a) Before identification of empty box</p>
             </div>
-            <div class="col-6">
+            <div class="col-6" id="fig:panda-box-trajectory-after">
                 <img src="img/panda/panda_box_trajectory.png" class="img-fluid" />
-                <p style="text-align: center;">(a) After identification of empty box</p>
+                <p style="text-align: center;">(b) After identification of empty box</p>
             </div>
         </div>
         <p>
             <b>Figure 9.</b> Trajectories from the Panda robot arm shaking an empty box. Visualized are the
             simulated (red) and real (black) observations before (a) and after (b) the inertial parameters of
-            the empty box and the friction from the universal joint (\autoref{tab:params-panda-box-phase1}) have been
+            the empty box and the friction from the universal joint (<a href="#tab:params-panda-box-phase1">Table 3 (a)</a>) have been
             identified. The columns correspond to the four reference points in the frame of the box (see a rendering of
-            them in \autoref{fig:panda-markers}), the rows show the $x$, $y$, and $z$ axes of these reference points in
+            them in <a href="#fig:panda-markers">Figure 8</a>), the rows show the $x$, $y$, and $z$ axes of these reference points in
             meters. The horizontal axes show the time step.
         </p>
 
@@ -1560,7 +1569,7 @@
         </div>
         <p>
             <b>Table 3.</b> Parameters to be estimated and their ranges for the two estimation phases of the
-            underactuated mechanism experiment from \autoref{sec:panda-box}.
+            underactuated mechanism experiment from <a href="#sec:panda-box">Section 2.5</a>.
         </p>
 
         <p>
@@ -1570,78 +1579,171 @@
             significant influence on the exploration behavior of these algorithms. With a larger observation noise
             variance the resulting posterior distribution became wider, however we were unable to attain such behavior
             with the NUTS estimator whose iterates quickly collapsed to a single point at the center of the box (see
-            \autoref{fig:panda-box-posterior-nuts}). Similarly, CEM immediately became stuck in the suboptimal
-            configuration shown in \autoref{fig:panda-box-posterior-cem}. Nonetheless, after 500 iterations, all methods
+            <a href="#fig:panda-box-posterior-nuts">Figure 10 (d)</a>). Similarly, CEM immediately became stuck in the suboptimal
+            configuration shown in <a href="#fig:panda-box-posterior-cem">Figure 10 (b)</a>. Nonetheless, after 500 iterations, all methods
             predicted weight positions that were aligned opposite to one another to balance the box.
         </p>
 
         <p>
-            As can be seen in \autoref{fig:panda-box-posterior-svgd}, SVGD achieves a fairly predictive posterior
+            As can be seen in <a href="#fig:panda-box-posterior-svgd">Figure 10 (e)</a>, SVGD achieves a fairly predictive posterior
             approximation, with many particles aligned close to the true vertical position at $y=0$. With the
             introduction of the multiple-shooting constraints, Constrained SVGD (CSVGD) converges significantly faster
             to a posterior distribution that accurately captures the true locations of the box, while retaining the
             exploration performance of SVGD that spreads out the particles over multiple modes, as shown in
-            \autoref{fig:panda-box-posterior-csvgd}.
+            <a href="#fig:panda-box-posterior-csvgd">Figure 10 (f)</a>.
         </p>
 
         <div class="row" id="fig:panda-box-posterior">
-            <div class="col-4">
+            <div class="col-4" id="fig:panda-box-posterior-emcee">
                 <img src="img/panda/box_position_emcee.png" alt="Emcee" class="img-fluid" />
                 <p style="text-align: center;">(a) Emcee</p>
             </div>
-            <div class="col-4">
+            <div class="col-4" id="fig:panda-box-posterior-cem">
                 <img src="img/panda/box_position_cem.png" alt="CEM" class="img-fluid" />
                 <p style="text-align: center;">(b) CEM</p>
             </div>
-            <div class="col-4">
+            <div class="col-4" id="fig:panda-box-posterior-sgld">
                 <img src="img/panda/box_position_sgld.png" alt="SGLD" class="img-fluid" />
                 <p style="text-align: center;">(c) SGLD</p>
             </div>
-            <div class="col-4">
+            <div class="col-4"  id="fig:panda-box-posterior-nuts">
                 <img src="img/panda/box_position_nuts.png" alt="NUTS" class="img-fluid" />
                 <p style="text-align: center;">(d) NUTS</p>
             </div>
-            <div class="col-4">
+            <div class="col-4"  id="fig:panda-box-posterior-svgd">
                 <img src="img/panda/box_position_svgd_ss.png" alt="SVGD" class="img-fluid" />
                 <p style="text-align: center;">(e) SVGD</p>
             </div>
-            <div class="col-4">
+            <div class="col-4"  id="fig:panda-box-posterior-csvgd">
                 <img src="img/panda/box_position_svgd_ms.png" alt="CSVGD" class="img-fluid" />
                 <p style="text-align: center;">(f) CSVGD</p>
             </div>
         </div>
         <p>
             <b>Figure 10.</b> Posterior plots over the 2D weight locations approximated by the estimation algorithms
-            applied to the underactuated mechanism experiment from \autoref{sec:panda-box}. Blue shades indicate a
-            Gaussian kernel density estimation computed over the inferred parameter samples. \rev{Since it is an
+            applied to the underactuated mechanism experiment from <a href="#sec:panda-box">Section 2.5</a>. Blue shades indicate a
+            Gaussian kernel density estimation computed over the inferred parameter samples. Since it is an
             unbounded kernel density estimate, the blue shades cross the parameter boundaries in certain areas (e.g. for
             CSVGD), while in reality none of the estimated particles violate the parameter limits.
         </p>
 
-        <h3>References</h3>
+        <h3 id="sec:references">References</h3>
 
+        <style>
+            ul.references {
+                list-style-type: none;
+                counter-reset: elementcounter;
+                padding-left: 0;
+                display: table;
+            }
 
+            .references li {
+                display: table-row;
+            }
 
-        <div class="container" id="acknowledgements">
-            <h2>Acknowledgements</h2>
+            .references li:before {
+                content: "["counter(elementcounter) "]";
+                counter-increment: elementcounter;
+                font-weight: normal;
+                display: table-cell;
+                padding-right: 1em;
+            }
+        </style>
 
-            <p class="lead">This work was supported by a Google PhD Fellowship and a NASA Space Technology
-                Research
-                Fellowship, grant number 80NSSC19K1182.</p>
-            <p class="lead">G.S. Sukhatme holds concurrent appointments as a Professor at USC and as an Amazon
-                Scholar. This
-                paper describes work performed at USC and is not associated with Amazon.</p>
+        <ul class="references">
+            <li>
+                J. Burkardt. Sobol - the sobol quasirandom sequence.
+                <a
+                    target="_blank" href="https://people.sc.fsu.edu/271~jburkardt/cpp_src/sobol/sobol.html">https://people.sc.fsu.edu/271~jburkardt/cpp_src/sobol/sobol.html</a>.
+                Accessed: 2021-06-23.
+            </li>
+            <li>
+                B. L. Fox. Algorithm 647: Implementation and relative efficiency of quasirandom sequence generators.
+                <em>ACM Trans. Math. Softw.</em>, 12(4):362–376, Dec. 1986. ISSN 0098-3500.
+                <a target="_blank" href="http://dx.doi.org/10.1145/22721.356187">doi:10.1145/22721.356187</a>.
+            </li>
+            <li>
+                R. Chou, Y. Boers, M. Podt, and M. Geist. Performance evaluation for particle filters. <em>In 14th
+                    International Conference on Information Fusion</em>, pages 1–7, July 2011.
+            </li>
+            <li>
+                Q. Wang, S. R. Kulkarni, and S. Verdu. Divergence Estimation for Multidimensional Densities Via
+                $k$-Nearest-Neighbor Distances. <em>IEEE Transactions on Information Theory</em>,
+                55(5):2392–2405, May 2009. ISSN 0018-9448. <a
+                    target="_blank" href="http://ieeexplore.ieee.org/document/4839047/">doi:10.1109/TIT.2009.2016060</a>.
+            </li>
+            <li>
+                E. Heiden, D. Millard, E. Coumans, Y. Sheng, and G. S. Sukhatme.
+                NeuralSim: Augmenting differentiable simulators with neural networks.
+                In <em>Proceedings of the IEEE International Conference on Robotics and Automation (ICRA)</em>, 2021.
+                URL <a
+                    target="_blank" href="https://github.com/google-research/tiny-differentiable-simulator">https://github.com/google-research/tiny-differentiable-simulator</a>.
+            </li>
+            <li>
+                R. Featherstone. <em>Rigid Body Dynamics Algorithms</em>. Springer-Verlag, Berlin, Heidelberg, 2007.
+                ISBN 0387743146.
+            </li>
+            <li>
+                L. S. Pontryagin. <em>Mathematical theory of optimal processes</em>. Routledge, 2018.
+            </li>
+            <li>
+                A. Asseman, T. Kornuta, and A. Ozcan. Learning beyond simulated physics. In <em>Modeling and
+                    Decision-making in the Spatiotemporal Domain Workshop</em>, 2018.
+                URL <a target="_blank" href="https://openreview.net/forum?id=HylajWsRF7">https://openreview.net/forum?id=HylajWsRF7</a>.
+            </li>
+            <li>
+                F. Ramos, R. Possas, and D. Fox. BayesSim: Adaptive domain randomization via probabilistic inference for
+                robotics simulators.
+                In <em>Proceedings of Robotics: Science and Systems</em>, Freiburg im Breisgau, Germany, June 2019.
+                <a target="_blank" href="http://dx.doi.org/10.15607/RSS.2019.XV.029">doi:10.15607/RSS.2019.XV.029</a>.
+            </li>
+            <li>
+                C. M. Bishop. Mixture density networks. 1994.
+            </li>
+            <li>
+                P. Kidger and T. Lyons. Signatory: differentiable computations of the signature and logsignature
+                transforms, on both CPU and GPU.
+                In <em>International Conference on Learning Representations</em>, 2021.
+                <a target="_blank" href="https://github.com/patrick-kidger/signatory">https://github.com/patrick-kidger/signatory</a>.
+            </li>
+            <li>
+                C. E. Rasmussen and C. K. I. Williams.
+                <em>Gaussian Processes for Machine Learning (Adaptive Computation and Machine Learning)</em>.
+                The MIT Press, 2005. ISBN 026218253X.
+            </li>
+            <li>
+                T. Coleman David. Reducing the Barrier to Entry of Complex Robotic Software: a MoveIt! Case Study.
+                2014. <a target="_blank" href="http://dx.doi.org/10.6092/JOSER_2014_05_01_P3">doi:10.6092/JOSER_2014_05_01_P3</a>. URL
+                <a target="_blank" href="https://aisberg.unibg.it//handle/10446/87657">
+                    https://aisberg.unibg.it//handle/10446/87657</a>. Publisher: Universita degli studi di Bergamo.
+            </li>
+            <li>
+                D. Q. Huynh. Metrics for 3d rotations: Comparison and analysis. <em>Journal of Mathematical Imaging and
+                    Vision</em>, 35(2):155–164, 2009.
+            </li>
+        </ul>
+    </div>
+
+    <div class="container" id="acknowledgements">
+        <h2>Acknowledgements</h2>
+
+        <p class="lead">This work was supported by a Google PhD Fellowship and a NASA Space Technology
+            Research
+            Fellowship, grant number 80NSSC19K1182.</p>
+        <p class="lead">G.S. Sukhatme holds concurrent appointments as a Professor at USC and as an Amazon
+            Scholar. This
+            paper describes work performed at USC and is not associated with Amazon.</p>
+    </div>
+
+    <div class="bg-light">
+        <div class="container" align="right" style="padding:40px 0">
+            Last updated on September 14, 2021
         </div>
+    </div>
 
-        <div class="bg-light">
-            <div class="container" align="right" style="padding:40px 0">
-                Last updated on September 14, 2021
-            </div>
-        </div>
-
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
-            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+        crossorigin="anonymous"></script>
 </body>
 
 </html>
