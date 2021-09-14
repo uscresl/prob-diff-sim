@@ -405,11 +405,11 @@
 
         <div class="row">
             <div class="col"></div>
-            <div class="col-4">
+            <div class="col-4" id="fig:double-pendulum-prod">
                 <img class="img-fluid" src="img/double_pendulum/combination_mean.png" />
                 <p align="center">(a) Product</p>
             </div>
-            <div class="col-4">
+            <div class="col-4" id="fig:double-pendulum-sum">
                 <img class="img-fluid" src="img/double_pendulum/combination_logsumexp.png" />
                 <p align="center">(b) Sum</p>
             </div>
@@ -420,7 +420,8 @@
             <div class="col"></div>
             <div class="col-8">
                 <p align="justify">
-                    Comparison of posterior parameter distributions obtained from fitting the parameters to two
+                    <b>Figure 1.</b> Comparison of posterior parameter distributions obtained from fitting the
+                    parameters to two
                     ground-truth trajectories generated from different link lengths of a simulated double pendulum
                     (units of the axes in meters). The trajectories were 300 steps long (which corresponds to a length
                     of 3s) and contain the 2 joint positions and 2 joint velocities of the uncontrolled
@@ -568,207 +569,222 @@
             example.
         </p>
 
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">Link</th>
-                    <th scope="col">Parameter</th>
-                    <th scope="col" colspan="2" align="center">Minimum</th>
-                    <th scope="col" colspan="2" align="center">Maximum</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th rowspan="5">Link 1</th>
-                    <th>Mass</th>
-                    <td align="right">0.05 </td>
-                    <td> $\kg$ </td>
-                    <td align="right"> 0.5 </td>
-                    <td> $\kg$ </td>
-                </tr>
-                <tr>
-                    <th> $I_{xx}$ </th>
-                    <td align="right"> 0.002 </td>
-                    <td> $\kg\cdot\meter^2$ </td>
-                    <td align="right"> 1.0 </td>
-                    <td> $\kg\cdot\meter^2$</td>
-                </tr>
-                <tr>
-                    <th> COM $x$ </th>
-                    <td align="right"> -0.2 </td>
-                    <td> $\meter$ </td>
-                    <td align="right"> 0.2 </td>
-                    <td> $\meter$ </td>
-                </tr>
-                <tr>
-                    <th> COM $y$ </th>
-                    <td align="right"> -0.2 </td>
-                    <td> $\meter$ </td>
-                    <td align="right"> 0.2 </td>
-                    <td> $\meter$ </td>
-                </tr>
-                <tr>
-                    <th> Joint friction </th>
-                    <td align="right"> 0.0 </td>
-                    <td> </td>
-                    <td align="right"> 0.5 </td>
-                    <td> </td>
-                </tr>
-                <hr />
-                <tr>
-                    <th rowspan="6">Link 2
-                    <th>Length </th>
-                    <td align="right"> 0.08 </td>
-                    <td> $\meter$ </td>
-                    <td align="right"> 0.3 </td>
-                    <td> $\meter$ </td>
-                </tr>
-                <tr>
-                    <th> Mass </th>
-                    <td align="right"> 0.05 </td>
-                    <td> $\kg$ </td>
-                    <td align="right"> 0.5 </td>
-                    <td> $\kg$ </td>
-                </tr>
-                <tr>
-                    <th> $I_{xx}$ </th>
-                    <td align="right"> 0.002 </td>
-                    <td> $\kg\cdot\meter^2$ </td>
-                    <td align="right"> 1.0 </td>
-                    <td> $\kg\cdot\meter^2$ </td>
-                </tr>
-                <tr>
-                    <th> COM $x$ </th>
-                    <td align="right"> -0.2 </td>
-                    <td> $\meter$ </td>
-                    <td align="right"> 0.2 </td>
-                    <td> $\meter$ </td>
-                </tr>
-                <tr>
-                    <th> COM $y$ </th>
-                    <td align="right"> -0.2 </td>
-                    <td> $\meter$ </td>
-                    <td align="right"> 0.2 </td>
-                    <td> $\meter$ </td>
-                </tr>
-                <tr>
-                    <th> Joint friction </th>
-                    <td align="right"> 0.0 </td>
-                    <td> </td>
-                    <td align="right"> 0.5 </td>
-                    <td> </td>
-                </tr>
-            </tbody>
-        </table>
-        <p><b>Table 1.</b> Parameters to be estimated. $I$ refers to the $3\times3$ inertia matrix, COM stands for
-            center of mass.</p>
+        <div class="row">
+            <div class="col-md-8">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Link</th>
+                            <th scope="col">Parameter</th>
+                            <th scope="col" colspan="2" style="text-align:center">Minimum</th>
+                            <th scope="col" colspan="2" style="text-align:center">Maximum</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th rowspan="5">Link 1</th>
+                            <th>Mass</th>
+                            <td align="right">0.05 </td>
+                            <td> $\kg$ </td>
+                            <td align="right"> 0.5 </td>
+                            <td> $\kg$ </td>
+                        </tr>
+                        <tr>
+                            <th> $I_{xx}$ </th>
+                            <td align="right"> 0.002 </td>
+                            <td> $\kg\cdot\meter^2$ </td>
+                            <td align="right"> 1.0 </td>
+                            <td> $\kg\cdot\meter^2$</td>
+                        </tr>
+                        <tr>
+                            <th> COM $x$ </th>
+                            <td align="right"> -0.2 </td>
+                            <td> $\meter$ </td>
+                            <td align="right"> 0.2 </td>
+                            <td> $\meter$ </td>
+                        </tr>
+                        <tr>
+                            <th> COM $y$ </th>
+                            <td align="right"> -0.2 </td>
+                            <td> $\meter$ </td>
+                            <td align="right"> 0.2 </td>
+                            <td> $\meter$ </td>
+                        </tr>
+                        <tr>
+                            <th> Joint friction </th>
+                            <td align="right"> 0.0 </td>
+                            <td> </td>
+                            <td align="right"> 0.5 </td>
+                            <td> </td>
+                        </tr>
+                        <tr>
+                            <th rowspan="6">Link 2
+                            <th>Length </th>
+                            <td align="right"> 0.08 </td>
+                            <td> $\meter$ </td>
+                            <td align="right"> 0.3 </td>
+                            <td> $\meter$ </td>
+                        </tr>
+                        <tr>
+                            <th> Mass </th>
+                            <td align="right"> 0.05 </td>
+                            <td> $\kg$ </td>
+                            <td align="right"> 0.5 </td>
+                            <td> $\kg$ </td>
+                        </tr>
+                        <tr>
+                            <th> $I_{xx}$ </th>
+                            <td align="right"> 0.002 </td>
+                            <td> $\kg\cdot\meter^2$ </td>
+                            <td align="right"> 1.0 </td>
+                            <td> $\kg\cdot\meter^2$ </td>
+                        </tr>
+                        <tr>
+                            <th> COM $x$ </th>
+                            <td align="right"> -0.2 </td>
+                            <td> $\meter$ </td>
+                            <td align="right"> 0.2 </td>
+                            <td> $\meter$ </td>
+                        </tr>
+                        <tr>
+                            <th> COM $y$ </th>
+                            <td align="right"> -0.2 </td>
+                            <td> $\meter$ </td>
+                            <td align="right"> 0.2 </td>
+                            <td> $\meter$ </td>
+                        </tr>
+                        <tr>
+                            <th> Joint friction </th>
+                            <td align="right"> 0.0 </td>
+                            <td> </td>
+                            <td align="right"> 0.5 </td>
+                            <td> </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-4">
+                <img src="img/ibm_pendulum/ibm-pendulum-timelapse.png" alt="IBM Pendulum" class="img-fluid" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8">
+                <p>
+                    <b>Table 1.</b> Parameters to be estimated. $I$ refers to the $3\times3$ inertia matrix, COM stands
+                    for center of mass.
+                </p>
+            </div>
+            <div class="col-md-4">
+                <p><b>Figure 2.</b> Time lapse of a double pendulum trajectory from the IBM dataset~\cite{asseman2018learning}.</p>
+            </div>
+        </div>
 
 
-        <h4>Ablation Study on Multiple Shooting</h4>
+    <h4>Ablation Study on Multiple Shooting</h4>
 
-        <p>
-            We evaluate the baseline estimation algorithms with our proposed multiple-shooting likelihood function
-            (using
-            10 shooting windows) on the physical double pendulum dataset from before. To make the constrained
-            optimization problem amenable to the MCMC samplers, we formulate the defect constraint through the following
-            likelihood:
-            $$
-            \begin{align}
-            \pdef(\statevec_t^s, \statevec_t) = \mathcal{N}(\statevec_t^s | \statevec_t,\sigma^2_{\text{def}}) \qquad
-            t\in [h, 2h, \dots],
-            \end{align}
-            $$
-            where we tune $\sigma^2_{\text{def}}$ to a small value (on the order of $10^{-2}$) such that the defects are
-            minimized during the estimation. As we describe in Sec. 4.4 from our main paper, the parameter space is
-            augmented by the shooting variables $\statevec_t^s$.
-        </p>
-        <p>
-            As shown in \autoref{tab:ms-baselines}, the MCMC approaches Emcee and NUTS do not benefit meaningfully from
-            the multiple-shooting approach. Emcee often yields unstable simulations from which we are not able to
-            compute some of the metrics. The increased dimensionality of the parameter space appears to add a
-            significant challenge to these methods, which are known to scale poorly to higher dimensions.
-            Despite being configured to use a Gaussian mixture model of 3 kernels, the CEM posterior immediately
-            collapses to a single point such that the KL divergence of simulated against real trajectories cannot be
-            computed.
-        </p>
-        <p>
-            We observe a significant improvement in estimation accuracy on SGLD, where the multiple-shooting approach
-            allowed it to converge to closely matching trajectories, as shown in \autoref{fig:sgld-ms}. As with SVGD,
-            the availability of gradients allows this method to scale better to the higher dimensional parameter space,
-            while the smoothed likelihood landscape further helps the approach to find better fitting parameters.
-        </p>
+    <p>
+        We evaluate the baseline estimation algorithms with our proposed multiple-shooting likelihood function
+        (using
+        10 shooting windows) on the physical double pendulum dataset from before. To make the constrained
+        optimization problem amenable to the MCMC samplers, we formulate the defect constraint through the following
+        likelihood:
+        $$
+        \begin{align}
+        \pdef(\statevec_t^s, \statevec_t) = \mathcal{N}(\statevec_t^s | \statevec_t,\sigma^2_{\text{def}}) \qquad
+        t\in [h, 2h, \dots],
+        \end{align}
+        $$
+        where we tune $\sigma^2_{\text{def}}$ to a small value (on the order of $10^{-2}$) such that the defects are
+        minimized during the estimation. As we describe in Sec. 4.4 from our main paper, the parameter space is
+        augmented by the shooting variables $\statevec_t^s$.
+    </p>
+    <p>
+        As shown in \autoref{tab:ms-baselines}, the MCMC approaches Emcee and NUTS do not benefit meaningfully from
+        the multiple-shooting approach. Emcee often yields unstable simulations from which we are not able to
+        compute some of the metrics. The increased dimensionality of the parameter space appears to add a
+        significant challenge to these methods, which are known to scale poorly to higher dimensions.
+        Despite being configured to use a Gaussian mixture model of 3 kernels, the CEM posterior immediately
+        collapses to a single point such that the KL divergence of simulated against real trajectories cannot be
+        computed.
+    </p>
+    <p>
+        We observe a significant improvement in estimation accuracy on SGLD, where the multiple-shooting approach
+        allowed it to converge to closely matching trajectories, as shown in \autoref{fig:sgld-ms}. As with SVGD,
+        the availability of gradients allows this method to scale better to the higher dimensional parameter space,
+        while the smoothed likelihood landscape further helps the approach to find better fitting parameters.
+    </p>
 
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col"></th>
-                    <th scope="col" colspan="2" align="center">$d_{\text{KL}} (\trajectoryset\real \parallel
-                        \trajectoryset\simu)$</th>
-                    <th scope="col" colspan="2" align="center">$d_{\text{KL}} (\trajectoryset\simu \parallel
-                        \trajectoryset\real)$</th>
-                    <th scope="col" colspan="2" align="center">MMD</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th>Algorithm</th>
-                    <th>SS</th>
-                    <th>MS</th>
-                    <th>SS</th>
-                    <th>MS</th>
-                </tr>
-                <tr>
-                    <th> Emcee </th>
-                    <td> \bf 8542.2466 </td>
-                    <td> 8950.4574 </td>
-                    <td> 4060.6312 </td>
-                    <td>N/A </td>
-                    <td> 1.1365 </td>
-                    <td> N/A </td>
-                </tr>
-                <tr>
-                    <th> CEM </th>
-                    <td> 8911.1798 </td>
-                    <td> \bf 8860.5115 </td>
-                    <td> 8549.5927 </td>
-                    <td>N/A </td>
-                    <td> 0.9687 </td>
-                    <td> \bf 0.5682 </td>
-                </tr>
-                <tr>
-                    <th> SGLD </th>
-                    <td> 8788.0962 </td>
-                    <td> \bf 5863.2728 </td>
-                    <td> 7876.0310 </td>
-                    <td>\bf 2187.2825 </td>
-                    <td> 2.1220 </td>
-                    <td> \bf 0.0759 </td>
-                </tr>
-                <tr>
-                    <th> NUTS </th>
-                    <td> 9196.7461 </td>
-                    <td> \bf 8785.5326 </td>
-                    <td> 6432.2131 </td>
-                    <td>\bf 4935.8983 </td>
-                    <td> \bf 0.5371 </td>
-                    <td> 1.1642 </td>
-                </tr>
-                <tr>
-                    <th> (C)SVGD </th>
-                    <td> 8803.5683 </td>
-                    <td> \bf 5204.5336 </td>
-                    <td> 10283.6659</td>
-                    <td> \bf 2773.1751 </td>
-                    <td> 0.7177 </td>
-                    <td> \bf 0.0366 </td>
-                </tr>
-            </tbody>
-        </table>
-        <p><b>Table 2.</b> Consistency metrics of the posterior distributions approximated from the physical double
-            pendulum dataset (\autoref{sec:ibm-pendulum}) by the different estimation algorithms using the
-            single-shooting likelihood $p_{ss}(\trajectory\real | \params)$ (column ``SS'') and the multiple-shooting
-            likelihood $p_{ms}(\trajectory\real | \params)$ (column ``MS'') with 10 shooting windows. Note that SVGD
-            with multiple-shooting corresponds to CSVGD.</p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col"></th>
+                <th scope="col" colspan="2" style="text-align:center">$d_{\text{KL}} (\trajectoryset\real \parallel
+                    \trajectoryset\simu)$</th>
+                <th scope="col" colspan="2" style="text-align:center">$d_{\text{KL}} (\trajectoryset\simu \parallel
+                    \trajectoryset\real)$</th>
+                <th scope="col" colspan="2" style="text-align:center">MMD</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th>Algorithm</th>
+                <th>SS</th>
+                <th>MS</th>
+                <th>SS</th>
+                <th>MS</th>
+            </tr>
+            <tr>
+                <th> Emcee </th>
+                <td> \bf 8542.2466 </td>
+                <td> 8950.4574 </td>
+                <td> 4060.6312 </td>
+                <td>N/A </td>
+                <td> 1.1365 </td>
+                <td> N/A </td>
+            </tr>
+            <tr>
+                <th> CEM </th>
+                <td> 8911.1798 </td>
+                <td> \bf 8860.5115 </td>
+                <td> 8549.5927 </td>
+                <td>N/A </td>
+                <td> 0.9687 </td>
+                <td> \bf 0.5682 </td>
+            </tr>
+            <tr>
+                <th> SGLD </th>
+                <td> 8788.0962 </td>
+                <td> \bf 5863.2728 </td>
+                <td> 7876.0310 </td>
+                <td>\bf 2187.2825 </td>
+                <td> 2.1220 </td>
+                <td> \bf 0.0759 </td>
+            </tr>
+            <tr>
+                <th> NUTS </th>
+                <td> 9196.7461 </td>
+                <td> \bf 8785.5326 </td>
+                <td> 6432.2131 </td>
+                <td>\bf 4935.8983 </td>
+                <td> \bf 0.5371 </td>
+                <td> 1.1642 </td>
+            </tr>
+            <tr>
+                <th> (C)SVGD </th>
+                <td> 8803.5683 </td>
+                <td> \bf 5204.5336 </td>
+                <td> 10283.6659</td>
+                <td> \bf 2773.1751 </td>
+                <td> 0.7177 </td>
+                <td> \bf 0.0366 </td>
+            </tr>
+        </tbody>
+    </table>
+    <p><b>Table 2.</b> Consistency metrics of the posterior distributions approximated from the physical double
+        pendulum dataset (\autoref{sec:ibm-pendulum}) by the different estimation algorithms using the
+        single-shooting likelihood $p_{ss}(\trajectory\real | \params)$ (column ``SS'') and the multiple-shooting
+        likelihood $p_{ms}(\trajectory\real | \params)$ (column ``MS'') with 10 shooting windows. Note that SVGD
+        with multiple-shooting corresponds to CSVGD.</p>
     </div>
 
     <div class="container" id="acknowledgements">
