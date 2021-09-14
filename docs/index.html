@@ -904,7 +904,7 @@
             density $q(\params | \trajectoryset)$ is learned directly from a dataset of simulation parameters and their
             corresponding rolled-out trajectories via supervised learning to approximate the posterior. A common choice
             of model for such density is a mixture density network~\cite{bishop1994mixture}, which parameterizes a
-            Gaussian mixture model. This is in contrast to our (C)SVGD algorithm} which can approximate
+            Gaussian mixture model. This is in contrast to our (C)SVGD algorithm which can approximate
             any shape of posterior by being a nonparametric inference algorithm.
         </p>
         </p>
@@ -921,7 +921,7 @@
         <p>
             The input to the learned density model has to be a sufficient statistic of the underlying data, while being
             low-dimensional in order to keep the learning problem computationally tractable. We consider the following
-            four} methods of processing the trajectories that are the input to the likelihood-free methods, as
+            four methods of processing the trajectories that are the input to the likelihood-free methods, as
             visualized for an example trajectory in \autoref{fig:bayessim-inputs}. Note that we configured the following
             input processing methods to generate a one-dimensional input vector that has a reasonable length to be
             computationally feasible to train on (given the 10,000 trajectories from the training dataset), while
@@ -948,8 +948,8 @@
         <p>
             <b>Summary:</b> for each state dimension of the trajectory, we compute the following statistics typical for
             time series: mean, variance, cross correlation between state dimensions of the trajectory, as well as
-            auto-correlations for each dimension at 5 different time delays: [5, 10, 20, 50, 100] time steps}.
-            These numbers are concatenated} for all state dimensions to a one-dimensional vector per input
+            auto-correlations for each dimension at 5 different time delays: [5, 10, 20, 50, 100] time steps.
+            These numbers are concatenated for all state dimensions to a one-dimensional vector per input
             trajectory.
         </p>
         <p>
@@ -957,7 +957,33 @@
             over the input trajectory. Such so-called path signatures have been recently introduced to extract
             information about order and area, thereby preserving features inherent to nonlinear trajectories. We select
             a depth for the signature transform of 3 for the double pendulum experiment, and 2 for the Panda arm
-            experiment, to obtain feature vectors of comparable size to the aforementioned input techniques}.
+            experiment, to obtain feature vectors of comparable size to the aforementioned input techniques.
+        </p>
+
+        <div class="row" id="fig:bayessim-inputs">
+            <div class="col">
+                <img src="img/ibm_pendulum/bayes_sim/ibm_groundtruth_raw.png" class="img-fluid" alt="Ground Truth" />
+                <p style="text-align: center;">(a) Raw Input</p>
+            </div>
+            <div class="col">
+                <img src="img/ibm_pendulum/bayes_sim/ibm_groundtruth_downsampled.png" class="img-fluid" alt="Downsampled" />
+                <p style="text-align: center;">(b) Downsampled</p>
+            </div>
+            <div class="col">
+                <img src="img/ibm_pendulum/bayes_sim/ibm_groundtruth_difference.png" class="img-fluid" alt="Difference" />
+                <p style="text-align: center;">(c) Difference</p>
+            </div>
+            <div class="col">
+                <img src="img/ibm_pendulum/bayes_sim/ibm_groundtruth_summary.png" class="img-fluid" alt="Summary" />
+                <p style="text-align: center;">(d) Summary</p>
+            </div>
+            <div class="col">
+                <img src="img/ibm_pendulum/bayes_sim/ibm_groundtruth_signature.png" class="img-fluid" alt="Signature" />
+                <p style="text-align: center;">(e) Signature</p>
+            </div>
+        </div>
+        <p>
+            <b>Figure 6.</b> Exemplary visualization of the input processing methods for the likelihood-free baselines from \autoref{sec:likelihoodfree} applied to a trajectory from the double pendulum experiment in \autoref{sec:ibm-pendulum}.
         </p>
 
         <h5 id="sec:bayessim-model">2.4.2 Density Model</h5>
@@ -989,6 +1015,136 @@
             posterior $q(\params | \trajectoryset)$ and simulate them to obtain 100 trajectories which are compared
             against the reference trajectory sets, as we did in the comparison for the other Bayesian inference methods
             in Tab. 1 of the main paper.
+        </p>
+
+        <table class="table numbers" id="tab:likelihoodfree-results">
+            <td></td>
+            <td></td>
+            <th colspan="3" style="text-align:center" class="border-start border-end">Double Pendulum Experiment</th>
+            <th style="text-align:center"> Panda Arm Experiment </th>
+            </tr>
+            <tr>
+                <th> Input </th>
+                <th> Model </th>
+                <th class="border-start" style="text-align:center"> $d_{\text{KL}} (\trajectoryset\real \parallel \trajectoryset\simu)$
+                </th>
+                <th style="text-align:center"> $d_{\text{KL}} (\trajectoryset\simu \parallel \trajectoryset\real)$
+                </th>
+                <th class="border-end" style="text-align:center"> MMD
+                </th>
+                <th style="text-align:center"> $\log\pobs(\trajectoryset\real \parallel \trajectoryset\simu)$ </th>
+            </tr>
+            <tr>
+                <th>Downsampled </th>
+                <th class="border-end"> MDN </th>
+                <td> 8817.9222 </td>
+                <td> 4050.4666 </td>
+                <td class="border-end"> 0.6748 </td>
+                <td> -17.4039 </td>
+            </tr>
+            <tr>
+                <th>Difference </th>
+                <th class="border-end"> MDN </th>
+                <td> 8919.2463 </td>
+                <td> 4633.2637 </td>
+                <td class="border-end"> 0.6285 </td>
+                <td> -17.1646 </td>
+            </tr>
+            <tr>
+                <th>Summary </th>
+                <th class="border-end"> MDN </th>
+                <td> 9092.5575 </td>
+                <td> 5093.8851 </td>
+                <td class="border-end"> 0.5664 </td>
+                <td> -18.3481 </td>
+            </tr>
+            <tr>
+                <th>Signature </th>
+                <th class="border-end"> MDN </th>
+                <td> 8985.8056 </td>
+                <td> 4610.5438 </td>
+                <td class="border-end"> 0.5807 </td>
+                <td> -19.3432 </td>
+            </tr>
+            <tr>
+                <th>Downsampled </th>
+                <th class="border-end"> MDRFF (RBF) </th>
+                <td> 9027.9474 </td>
+                <td> 5091.5283 </td>
+                <td class="border-end"> 0.5593 </td>
+                <td> -17.2335 </td>
+            </tr>
+            <tr>
+                <th>Difference </th>
+                <th class="border-end"> MDRFF (RBF) </th>
+                <td> 8936.3823 </td>
+                <td> 4282.8599 </td>
+                <td class="border-end"> 0.5988 </td>
+                <td> -18.4892 </td>
+            </tr>
+            <tr>
+                <th>Summary </th>
+                <th class="border-end"> MDRFF (RBF) </th>
+                <td> 9063.1753 </td>
+                <td> 4884.1398 </td>
+                <td class="border-end"> 0.5672 </td>
+                <td> -19.5430 </td>
+            </tr>
+            <tr>
+                <th>Signature </th>
+                <th class="border-end"> MDRFF (RBF) </th>
+                <td> 8980.9080 </td>
+                <td> 4081.1160 </td>
+                <td class="border-end"> 0.6016 </td>
+                <td> -18.3458 </td>
+            </tr>
+            <tr>
+                <th>Downsampled </th>
+                <th class="border-end"> MDRFF (Matérn) </th>
+                <td> 8818.1830 </td>
+                <td> 3794.9873 </td>
+                <td class="border-end"> 0.6110 </td>
+                <td> -17.6395 </td>
+            </tr>
+            <tr>
+                <th>Difference </th>
+                <th class="border-end"> MDRFF (Matérn) </th>
+                <td> 8859.2156 </td>
+                <td> 4349.9971 </td>
+                <td class="border-end"> 0.6176 </td>
+                <td> -17.2752 </td>
+            </tr>
+            <tr>
+                <th>Summary </th>
+                <th class="border-end"> MDRFF (Matérn) </th>
+                <td> 8962.0501 </td>
+                <td> 4241.4551 </td>
+                <td class="border-end"> 0.5999 </td>
+                <td> -19.6672 </td>
+            </tr>
+            <tr>
+                <th>Signature </th>
+                <th class="border-end"> MDRFF (Matérn) </th>
+                <td> 9036.9626 </td>
+                <td> 4620.9517 </td>
+                <td class="border-end"> 0.5715 </td>
+                <td> -18.1652 </td>
+            </tr>
+            <tr>
+                <th colspan="2" style="text-align:center" class="border-end">CSVGD </th>
+                <td class="text-primary"> 5204.5336 </td>
+                <td class="text-primary"> 2773.1751 </td>
+                <td class="text-primary border-end"> 0.0366 </td>
+                <td class="text-primary"> -15.1671 </td>
+            </tr>
+        </table>
+        <p>
+            <b>Table 2.</b>
+            Consistency metrics of the posterior distributions approximated by the different BayesSim instantiations,
+            where the input method and model name (including the kernel type for the MDRFF model) are given. Each metric
+            is calculated across simulated and real trajectories. Lower is better on all metrics except the
+            log-likelihood $\log\pobs(\trajectoryset\real \parallel \trajectoryset\simu)$ from the Panda arm experiment.
+            For comparison, in the last row, we reproduce the numbers from CSVGD shown in Tab.~1 of the main paper.
         </p>
     </div>
 
