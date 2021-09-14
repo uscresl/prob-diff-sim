@@ -87,6 +87,16 @@
         .actions .col {
             text-align: center;
         }
+
+        p {
+            text-align: justify;
+        }
+
+        table.numbers td {
+            font-family: monospace !important;
+            text-align: right;
+            padding-right: 5%;
+        }
     </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.18/dist/katex.min.css"
         integrity="sha384-zTROYFVGOfTw7JV7KUu8udsvW2fx4lWOsCEDqhBreBwlHI4ioVRtmIvEThzJHGET" crossorigin="anonymous">
@@ -495,10 +505,10 @@
             not require a large amount of samples from the ground-truth distribution.
         </p>
 
-        <h3>Experiments</h3>
+        <h3>2 Experiments</h3>
         <p>We provide further technical details and results from the experiments we present in the main paper.</p>
 
-        <h4>Differentiable Simulator</h4>
+        <h4 id="sec:dynamics">2.1 Differentiable Simulator</h4>
 
         <p>
             Other than requiring a differentiable forward dynamics model which allows to simulate the system in its
@@ -543,7 +553,7 @@
         </p>
 
 
-        <h4>Identify Real-world Double Pendulum</h4>
+        <h4 id="sec:ibm-pendulum">2.2 Identify Real-world Double Pendulum</h4>
         <p>
             We set up the double pendulum estimation experiment with the 11 parameters shown in
             \autoref{tab:params-ibm-pendulum} to be estimated. The state space consists of the two positions and
@@ -739,7 +749,7 @@
             <div class="col"></div>
         </div>
 
-        <h4>Ablation Study on Multiple Shooting</h4>
+        <h4 id="sec:exp-multiple-shooting">2.3 Ablation Study on Multiple Shooting</h4>
 
         <p>
             We evaluate the baseline estimation algorithms with our proposed multiple-shooting likelihood
@@ -774,18 +784,8 @@
             cannot be
             computed.
         </p>
-        <p>
-            We observe a significant improvement in estimation accuracy on SGLD, where the multiple-shooting
-            approach
-            allowed it to converge to closely matching trajectories, as shown in \autoref{fig:sgld-ms}. As with
-            SVGD,
-            the availability of gradients allows this method to scale better to the higher dimensional parameter
-            space,
-            while the smoothed likelihood landscape further helps the approach to find better fitting
-            parameters.
-        </p>
 
-        <table class="table">
+        <table class="table numbers">
             <thead>
                 <tr>
                     <th scope="col"></th>
@@ -801,14 +801,14 @@
             <tbody>
                 <tr>
                     <th>Algorithm</th>
-                    <th>SS</th>
-                    <th>MS</th>
-                    <th>SS</th>
-                    <th>MS</th>
+                    <th style="text-align:center">SS</th>
+                    <th style="text-align:center">MS</th>
+                    <th style="text-align:center">SS</th>
+                    <th style="text-align:center">MS</th>
                 </tr>
                 <tr>
                     <th> Emcee </th>
-                    <td> \bf 8542.2466 </td>
+                    <td class="text-primary"> 8542.2466 </td>
                     <td> 8950.4574 </td>
                     <td> 4060.6312 </td>
                     <td>N/A </td>
@@ -818,50 +818,180 @@
                 <tr>
                     <th> CEM </th>
                     <td> 8911.1798 </td>
-                    <td> \bf 8860.5115 </td>
+                    <td class="text-primary"> 8860.5115 </td>
                     <td> 8549.5927 </td>
                     <td>N/A </td>
                     <td> 0.9687 </td>
-                    <td> \bf 0.5682 </td>
+                    <td class="text-primary"> 0.5682 </td>
                 </tr>
                 <tr>
                     <th> SGLD </th>
                     <td> 8788.0962 </td>
-                    <td> \bf 5863.2728 </td>
+                    <td class="text-primary"> 5863.2728 </td>
                     <td> 7876.0310 </td>
-                    <td>\bf 2187.2825 </td>
+                    <td class="text-primary">2187.2825 </td>
                     <td> 2.1220 </td>
-                    <td> \bf 0.0759 </td>
+                    <td class="text-primary"> 0.0759 </td>
                 </tr>
                 <tr>
                     <th> NUTS </th>
                     <td> 9196.7461 </td>
-                    <td> \bf 8785.5326 </td>
+                    <td class="text-primary"> 8785.5326 </td>
                     <td> 6432.2131 </td>
-                    <td>\bf 4935.8983 </td>
-                    <td> \bf 0.5371 </td>
+                    <td class="text-primary">4935.8983 </td>
+                    <td class="text-primary"> 0.5371 </td>
                     <td> 1.1642 </td>
                 </tr>
                 <tr>
                     <th> (C)SVGD </th>
                     <td> 8803.5683 </td>
-                    <td> \bf 5204.5336 </td>
+                    <td class="text-primary"> 5204.5336 </td>
                     <td> 10283.6659</td>
-                    <td> \bf 2773.1751 </td>
+                    <td class="text-primary"> 2773.1751 </td>
                     <td> 0.7177 </td>
-                    <td> \bf 0.0366 </td>
+                    <td class="text-primary"> 0.0366 </td>
                 </tr>
             </tbody>
         </table>
-        <p><b>Table 2.</b> Consistency metrics of the posterior distributions approximated from the physical
-            double
-            pendulum dataset (\autoref{sec:ibm-pendulum}) by the different estimation algorithms using the
+        <p>
+            <b>Table 2.</b> Consistency metrics of the posterior distributions approximated from the physical
+            double pendulum dataset (\autoref{sec:ibm-pendulum}) by the different estimation algorithms using the
             single-shooting likelihood $p_{ss}(\trajectory\real | \params)$ (column ``SS'') and the
             multiple-shooting
             likelihood $p_{ms}(\trajectory\real | \params)$ (column ``MS'') with 10 shooting windows. Note that
-            SVGD
-            with multiple-shooting corresponds to CSVGD.</p>
+            SVGD with multiple-shooting corresponds to CSVGD.
+        </p>
+
+        <p>
+            We observe a significant improvement in estimation accuracy on SGLD, where the multiple-shooting
+            approach
+            allowed it to converge to closely matching trajectories, as shown in \autoref{fig:sgld-ms}. As with
+            SVGD,
+            the availability of gradients allows this method to scale better to the higher dimensional parameter
+            space,
+            while the smoothed likelihood landscape further helps the approach to find better fitting
+            parameters.
+        </p>
+
+        <div class="row" id="fig:sgld-ms">
+            <div class="col"></div>
+            <div class="col-8">
+                <img src="img/ibm_pendulum/sgld_ms.png" class="img-fluid" alt="SGLD with Multiple Shooting" />
+                <p>
+                    <b>Figure 4.</b> Kernel density estimation over trajectory roll-outs from the last estimated 100
+                    parameter guesses of SGLD with the multiple-shooting likelihood model (see
+                    \autoref{sec:exp-multiple-shooting}), applied to the physical double pendulum dataset from
+                    \autoref{sec:ibm-pendulum}. Similarly to SVGD, SGLD benefits significantly from the smoother
+                    likelihood function while being able to cope with the augmented parameter space thanks to its
+                    gradient-based approach.
+                </p>
+            </div>
+            <div class="col"></div>
+        </div>
+
+        <h4 id="sec:likelihoodfree">2.4 Comparison to Likelihood-free Inference</h4>
+        <p>
+            Our Bayesian inference approach leverages the simulator as part of the likelihood model to
+            approximate posterior distributions over simulation parameters, which means the simulator is indispensable
+            in our estimation process}. In the following, we compare our approach against the likelihood-free inference
+            approach BayesSim~\cite{ramos_bayessim_2019} that leverages approximate Bayesian computation (ABC) which is
+            the most popular family of algorithms within likelihood-free methods.
+        </p>
+
+        <p>
+            Likelihood-free methods assume the simulator is a black box that can generate a trajectory given a parameter
+            setting. Instead of querying the simulator to evaluate the likelihood (as in our approach), a conditional
+            density $q(\params | \trajectoryset)$ is learned directly from a dataset of simulation parameters and their
+            corresponding rolled-out trajectories via supervised learning to approximate the posterior. A common choice
+            of model for such density is a mixture density network~\cite{bishop1994mixture}, which parameterizes a
+            Gaussian mixture model. This is in contrast to our (C)SVGD algorithm} which can approximate
+            any shape of posterior by being a nonparametric inference algorithm.
+        </p>
+        </p>
+
+        <p>
+            For our experiments we collect a dataset of 10,000 simulated trajectories of parameters randomly sampled
+            from the prior distribution. We train the density network via the Adam optimizer with a learning rate of
+            $10^{-3}$ for 3000 epochs, after which we observed no meaningful improvement to the calculated
+            log-likelihood loss during training. In the following, we provide further details on the likelihood-free
+            inference pipeline we consider, by describing the input data processing and the model used for approximating
+            the posterior.
+        </p>
+        <h5 id="sec:bayessim-input">2.4.1 Input Data Processing</h5>
+        <p>
+            The input to the learned density model has to be a sufficient statistic of the underlying data, while being
+            low-dimensional in order to keep the learning problem computationally tractable. We consider the following
+            four} methods of processing the trajectories that are the input to the likelihood-free methods, as
+            visualized for an example trajectory in \autoref{fig:bayessim-inputs}. Note that we configured the following
+            input processing methods to generate a one-dimensional input vector that has a reasonable length to be
+            computationally feasible to train on (given the 10,000 trajectories from the training dataset), while
+            achieving acceptable performance which we validated through testing various settings.
+        </p>
+
+        <p>
+            <b>Downsampled:</b> we down-sample the trajectory so that for the double pendulum experiment
+            (\autoref{sec:ibm-pendulum}) we use only every 20th state, for the Panda arm experiment
+            (\autoref{sec:panda-box}) only every 200-th state of the trajectory. Finally, the state dimensions per
+            trajectory are concatenated to a one-dimensional vector.
+        </p>
+        <p>
+            <b>Difference:</b> we adapt the input statistic from the original BayesSim approach in \cite[Eq.
+            (22)]{ramos_bayessim_2019} where the differences of two consecutive states along the trajectory are used in
+            concatenation with their mean and variance:
+            $$
+            \psi(\trajectory) = (\operatorname{downsample}(\tau), \mathbb{E}[\tau], \operatorname{Var}[\tau])
+            \qquad\text{where}\qquad
+            \tau = \{\statevec_t - \statevec_{t-1}\}_{t=1}^T
+            $$
+            As before, we down-sample these state differences and concatenate them to a vector.
+        </p>
+        <p>
+            <b>Summary:</b> for each state dimension of the trajectory, we compute the following statistics typical for
+            time series: mean, variance, cross correlation between state dimensions of the trajectory, as well as
+            auto-correlations for each dimension at 5 different time delays: [5, 10, 20, 50, 100] time steps}.
+            These numbers are concatenated} for all state dimensions to a one-dimensional vector per input
+            trajectory.
+        </p>
+        <p>
+            <b>Signature:</b> we compute the signature transform from the signatory package~\cite{kidger2021signatory}
+            over the input trajectory. Such so-called path signatures have been recently introduced to extract
+            information about order and area, thereby preserving features inherent to nonlinear trajectories. We select
+            a depth for the signature transform of 3 for the double pendulum experiment, and 2 for the Panda arm
+            experiment, to obtain feature vectors of comparable size to the aforementioned input techniques}.
+        </p>
+
+        <h5 id="sec:bayessim-model">2.4.2 Density Model</h5>
+        <p>
+            As the density model for the learned posterior $q(\params | \trajectoryset)$, we select the following
+            commonly used representations.
+        </p>
+        <p>
+            <b>Mixture density network (<b>MDN</b>):</b> uses neural network features from a feed-forward neural network
+            using two hidden layers with 24 units each.
+        </p>
+        <p>
+            <b>Mixture density random Fourier features (<b>MDRFF</b>):</b> this density model uses Fourier features and
+            a kernel. We evaluate the MDRFF with the following common choices for the kernel:
+        <ul>
+            <li> Radial Basis Function (<b>RBF</b>) kernel </li>
+            <li> <b>Matérn</b> kernel~\cite[Equation (4.14)]{rasmussen2005gp} with $\nu=\frac{5}{2}$ </li>
+        </ul>
+
+        <h5 id="sec:bayessim-eval">2.4.3 Evaluation</h5>
+        <p>
+            Note that instead of action generation, which is part of the proposed BayesSim
+            pipeline~\cite{ramos_bayessim_2019}, we only focus on the inference of the posterior density over simulation
+            parameters in order to compare such likelihood-free inference approach against our method.
+        </p>
+        <p>
+            Finally, to evaluate the metrics shown in \autoref{tab:likelihoodfree-results} for each BayesSim
+            instantiation (input method and density model), we sample 100 parameter vectors from the learned
+            posterior $q(\params | \trajectoryset)$ and simulate them to obtain 100 trajectories which are compared
+            against the reference trajectory sets, as we did in the comparison for the other Bayesian inference methods
+            in Tab. 1 of the main paper.
+        </p>
     </div>
+
 
     <div class="container" id="acknowledgements">
         <h2>Acknowledgements</h2>
