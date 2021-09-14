@@ -555,19 +555,6 @@
             recording frequency of 400Hz).
 
         </p>
-        <p>
-            Since we know that all trajectories in this dataset stem from the same double
-            pendulum~\cite{asseman2018learning}, we only used a single reference trajectory as target trajectory
-            $\trajectory\real$ during the estimation. We let each estimator run for 2000 iterations. For evaluation, we
-            calculate the consistency metrics from Tab.~1 of the main paper over 10 held-out trajectories from a test
-            dataset. For comparison, we visualize the trajectory density over simulations rolled out from the last 100
-            Markov samples (or 100 particles in the case of particle-based approaches) in
-            \autoref{fig:ibm-pendulum-rollouts}. The ground-truth shown in these plots again stems from the unseen test
-            dataset. This experiment further demonstrates the generalizability of simulation-based inference, which,
-            when an adequate model has been implemented and its parameters identified, can predict outcomes under
-            various novel conditions even though the training dataset consisted of only a single trajectory in this
-            example.
-        </p>
 
         <div class="row">
             <div class="col-md-8">
@@ -675,124 +662,215 @@
                 </p>
             </div>
             <div class="col-md-4">
-                <p><b>Figure 2.</b> Time lapse of a double pendulum trajectory from the IBM dataset~\cite{asseman2018learning}.</p>
+                <p><b>Figure 2.</b> Time lapse of a double pendulum trajectory from the IBM
+                    dataset~\cite{asseman2018learning}.</p>
             </div>
         </div>
+        <p>
+            Since we know that all trajectories in this dataset stem from the same double
+            pendulum~\cite{asseman2018learning}, we only used a single reference trajectory as target trajectory
+            $\trajectory\real$ during the estimation. We let each estimator run for 2000 iterations. For evaluation, we
+            calculate the consistency metrics from Tab.~1 of the main paper over 10 held-out trajectories from a test
+            dataset. For comparison, we visualize the trajectory density over simulations rolled out from the last 100
+            Markov samples (or 100 particles in the case of particle-based approaches) in
+            \autoref{fig:ibm-pendulum-rollouts}. The ground-truth shown in these plots again stems from the unseen test
+            dataset. This experiment further demonstrates the generalizability of simulation-based inference, which,
+            when an adequate model has been implemented and its parameters identified, can predict outcomes under
+            various novel conditions even though the training dataset consisted of only a single trajectory in this
+            example.
+        </p>
 
 
-    <h4>Ablation Study on Multiple Shooting</h4>
+        <div class="row" id="fig:ibm-pendulum-rollouts">
+            <div class="col"></div>
+            <div class="col-8">
+                <table class="table table-borderless table-hover align-middle">
+                    <tr>
+                        <th>
+                            Emcee </th>
+                        <td>
+                            <img src="img/ibm_pendulum/mcmc_trajectories.png" alt="Emcee" class="img-fluid" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            CEM </th>
+                        <td>
+                            <img src="img/ibm_pendulum/cem_trajectories.png" class="img-fluid" alt="CEM" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            NUTS </th>
+                        <td>
+                            <img src="img/ibm_pendulum/nuts_trajectories.png" class="img-fluid" alt="NUTS" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            SGLD </th>
+                        <td>
+                            <img src="img/ibm_pendulum/sgld_trajectories.png" class="img-fluid" alt="SGLD" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            SVGD </th>
+                        <td>
+                            <img src="img/ibm_pendulum/svgd_ss_test.png" class="img-fluid" alt="SVGD" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            CSVGD </th>
+                        <td>
+                            <img src="img/ibm_pendulum/svgd_ms_test.png" class="img-fluid" alt="CSVGD" />
+                        </td>
+                    </tr>
+                </table>
+                <p>
+                    <b>Figure 3.</b> Kernel density estimation over trajectory roll-outs from the last estimated 100
+                    parameter guesses of each method, applied to the physical double pendulum dataset from
+                    \autoref{sec:ibm-pendulum}. The ground-truth trajectory here stems from the test dataset of 10
+                    trajectories that were held out during training. The particle-based approaches (CEM, SVGD, CSVGD)
+                    use 100 particles.
+                </p>
+            </div>
+            <div class="col"></div>
+        </div>
 
-    <p>
-        We evaluate the baseline estimation algorithms with our proposed multiple-shooting likelihood function
-        (using
-        10 shooting windows) on the physical double pendulum dataset from before. To make the constrained
-        optimization problem amenable to the MCMC samplers, we formulate the defect constraint through the following
-        likelihood:
-        $$
-        \begin{align}
-        \pdef(\statevec_t^s, \statevec_t) = \mathcal{N}(\statevec_t^s | \statevec_t,\sigma^2_{\text{def}}) \qquad
-        t\in [h, 2h, \dots],
-        \end{align}
-        $$
-        where we tune $\sigma^2_{\text{def}}$ to a small value (on the order of $10^{-2}$) such that the defects are
-        minimized during the estimation. As we describe in Sec. 4.4 from our main paper, the parameter space is
-        augmented by the shooting variables $\statevec_t^s$.
-    </p>
-    <p>
-        As shown in \autoref{tab:ms-baselines}, the MCMC approaches Emcee and NUTS do not benefit meaningfully from
-        the multiple-shooting approach. Emcee often yields unstable simulations from which we are not able to
-        compute some of the metrics. The increased dimensionality of the parameter space appears to add a
-        significant challenge to these methods, which are known to scale poorly to higher dimensions.
-        Despite being configured to use a Gaussian mixture model of 3 kernels, the CEM posterior immediately
-        collapses to a single point such that the KL divergence of simulated against real trajectories cannot be
-        computed.
-    </p>
-    <p>
-        We observe a significant improvement in estimation accuracy on SGLD, where the multiple-shooting approach
-        allowed it to converge to closely matching trajectories, as shown in \autoref{fig:sgld-ms}. As with SVGD,
-        the availability of gradients allows this method to scale better to the higher dimensional parameter space,
-        while the smoothed likelihood landscape further helps the approach to find better fitting parameters.
-    </p>
+        <h4>Ablation Study on Multiple Shooting</h4>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col"></th>
-                <th scope="col" colspan="2" style="text-align:center">$d_{\text{KL}} (\trajectoryset\real \parallel
-                    \trajectoryset\simu)$</th>
-                <th scope="col" colspan="2" style="text-align:center">$d_{\text{KL}} (\trajectoryset\simu \parallel
-                    \trajectoryset\real)$</th>
-                <th scope="col" colspan="2" style="text-align:center">MMD</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <th>Algorithm</th>
-                <th>SS</th>
-                <th>MS</th>
-                <th>SS</th>
-                <th>MS</th>
-            </tr>
-            <tr>
-                <th> Emcee </th>
-                <td> \bf 8542.2466 </td>
-                <td> 8950.4574 </td>
-                <td> 4060.6312 </td>
-                <td>N/A </td>
-                <td> 1.1365 </td>
-                <td> N/A </td>
-            </tr>
-            <tr>
-                <th> CEM </th>
-                <td> 8911.1798 </td>
-                <td> \bf 8860.5115 </td>
-                <td> 8549.5927 </td>
-                <td>N/A </td>
-                <td> 0.9687 </td>
-                <td> \bf 0.5682 </td>
-            </tr>
-            <tr>
-                <th> SGLD </th>
-                <td> 8788.0962 </td>
-                <td> \bf 5863.2728 </td>
-                <td> 7876.0310 </td>
-                <td>\bf 2187.2825 </td>
-                <td> 2.1220 </td>
-                <td> \bf 0.0759 </td>
-            </tr>
-            <tr>
-                <th> NUTS </th>
-                <td> 9196.7461 </td>
-                <td> \bf 8785.5326 </td>
-                <td> 6432.2131 </td>
-                <td>\bf 4935.8983 </td>
-                <td> \bf 0.5371 </td>
-                <td> 1.1642 </td>
-            </tr>
-            <tr>
-                <th> (C)SVGD </th>
-                <td> 8803.5683 </td>
-                <td> \bf 5204.5336 </td>
-                <td> 10283.6659</td>
-                <td> \bf 2773.1751 </td>
-                <td> 0.7177 </td>
-                <td> \bf 0.0366 </td>
-            </tr>
-        </tbody>
-    </table>
-    <p><b>Table 2.</b> Consistency metrics of the posterior distributions approximated from the physical double
-        pendulum dataset (\autoref{sec:ibm-pendulum}) by the different estimation algorithms using the
-        single-shooting likelihood $p_{ss}(\trajectory\real | \params)$ (column ``SS'') and the multiple-shooting
-        likelihood $p_{ms}(\trajectory\real | \params)$ (column ``MS'') with 10 shooting windows. Note that SVGD
-        with multiple-shooting corresponds to CSVGD.</p>
+        <p>
+            We evaluate the baseline estimation algorithms with our proposed multiple-shooting likelihood
+            function
+            (using
+            10 shooting windows) on the physical double pendulum dataset from before. To make the constrained
+            optimization problem amenable to the MCMC samplers, we formulate the defect constraint through the
+            following
+            likelihood:
+            $$
+            \begin{align}
+            \pdef(\statevec_t^s, \statevec_t) = \mathcal{N}(\statevec_t^s | \statevec_t,\sigma^2_{\text{def}})
+            \qquad
+            t\in [h, 2h, \dots],
+            \end{align}
+            $$
+            where we tune $\sigma^2_{\text{def}}$ to a small value (on the order of $10^{-2}$) such that the
+            defects are
+            minimized during the estimation. As we describe in Sec. 4.4 from our main paper, the parameter space
+            is
+            augmented by the shooting variables $\statevec_t^s$.
+        </p>
+        <p>
+            As shown in \autoref{tab:ms-baselines}, the MCMC approaches Emcee and NUTS do not benefit
+            meaningfully from
+            the multiple-shooting approach. Emcee often yields unstable simulations from which we are not able
+            to
+            compute some of the metrics. The increased dimensionality of the parameter space appears to add a
+            significant challenge to these methods, which are known to scale poorly to higher dimensions.
+            Despite being configured to use a Gaussian mixture model of 3 kernels, the CEM posterior immediately
+            collapses to a single point such that the KL divergence of simulated against real trajectories
+            cannot be
+            computed.
+        </p>
+        <p>
+            We observe a significant improvement in estimation accuracy on SGLD, where the multiple-shooting
+            approach
+            allowed it to converge to closely matching trajectories, as shown in \autoref{fig:sgld-ms}. As with
+            SVGD,
+            the availability of gradients allows this method to scale better to the higher dimensional parameter
+            space,
+            while the smoothed likelihood landscape further helps the approach to find better fitting
+            parameters.
+        </p>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col" colspan="2" style="text-align:center">$d_{\text{KL}} (\trajectoryset\real
+                        \parallel
+                        \trajectoryset\simu)$</th>
+                    <th scope="col" colspan="2" style="text-align:center">$d_{\text{KL}} (\trajectoryset\simu
+                        \parallel
+                        \trajectoryset\real)$</th>
+                    <th scope="col" colspan="2" style="text-align:center">MMD</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th>Algorithm</th>
+                    <th>SS</th>
+                    <th>MS</th>
+                    <th>SS</th>
+                    <th>MS</th>
+                </tr>
+                <tr>
+                    <th> Emcee </th>
+                    <td> \bf 8542.2466 </td>
+                    <td> 8950.4574 </td>
+                    <td> 4060.6312 </td>
+                    <td>N/A </td>
+                    <td> 1.1365 </td>
+                    <td> N/A </td>
+                </tr>
+                <tr>
+                    <th> CEM </th>
+                    <td> 8911.1798 </td>
+                    <td> \bf 8860.5115 </td>
+                    <td> 8549.5927 </td>
+                    <td>N/A </td>
+                    <td> 0.9687 </td>
+                    <td> \bf 0.5682 </td>
+                </tr>
+                <tr>
+                    <th> SGLD </th>
+                    <td> 8788.0962 </td>
+                    <td> \bf 5863.2728 </td>
+                    <td> 7876.0310 </td>
+                    <td>\bf 2187.2825 </td>
+                    <td> 2.1220 </td>
+                    <td> \bf 0.0759 </td>
+                </tr>
+                <tr>
+                    <th> NUTS </th>
+                    <td> 9196.7461 </td>
+                    <td> \bf 8785.5326 </td>
+                    <td> 6432.2131 </td>
+                    <td>\bf 4935.8983 </td>
+                    <td> \bf 0.5371 </td>
+                    <td> 1.1642 </td>
+                </tr>
+                <tr>
+                    <th> (C)SVGD </th>
+                    <td> 8803.5683 </td>
+                    <td> \bf 5204.5336 </td>
+                    <td> 10283.6659</td>
+                    <td> \bf 2773.1751 </td>
+                    <td> 0.7177 </td>
+                    <td> \bf 0.0366 </td>
+                </tr>
+            </tbody>
+        </table>
+        <p><b>Table 2.</b> Consistency metrics of the posterior distributions approximated from the physical
+            double
+            pendulum dataset (\autoref{sec:ibm-pendulum}) by the different estimation algorithms using the
+            single-shooting likelihood $p_{ss}(\trajectory\real | \params)$ (column ``SS'') and the
+            multiple-shooting
+            likelihood $p_{ms}(\trajectory\real | \params)$ (column ``MS'') with 10 shooting windows. Note that
+            SVGD
+            with multiple-shooting corresponds to CSVGD.</p>
     </div>
 
     <div class="container" id="acknowledgements">
         <h2>Acknowledgements</h2>
 
-        <p class="lead">This work was supported by a Google PhD Fellowship and a NASA Space Technology Research
+        <p class="lead">This work was supported by a Google PhD Fellowship and a NASA Space Technology
+            Research
             Fellowship, grant number 80NSSC19K1182.</p>
-        <p class="lead">G.S. Sukhatme holds concurrent appointments as a Professor at USC and as an Amazon Scholar. This
+        <p class="lead">G.S. Sukhatme holds concurrent appointments as a Professor at USC and as an Amazon
+            Scholar. This
             paper describes work performed at USC and is not associated with Amazon.</p>
     </div>
 
