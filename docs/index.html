@@ -1,0 +1,795 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta property="og:site_name" content="Differentiable Cutting Simulator">
+    <meta property="og:title" content="DiSECt - Differentiable Cutting Simulator">
+    <meta property="og:description"
+        content="A differentiable simulator for robotic cutting, enabling efficient inference of simulation parameters, and optimization of cutting motions.">
+    <meta property="og:url" content="https://diff-cutting-sim.github.io">
+    <meta property="og:image" content="https://diff-cutting-sim.github.io/teaser.jpg">
+    <meta property="og:image:type" content="image/jpeg">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="DiSECt - Differentiable Cutting Simulator">
+    <meta name="twitter:description"
+        content="A differentiable simulator for robotic cutting, enabling efficient inference of simulation parameters, and optimization of cutting motions.">
+    <meta name="twitter:creator" content="@eric_heiden">
+    <meta name="twitter:url" content="https://diff-cutting-sim.github.io">
+    <meta name="twitter:image:src" content="https://diff-cutting-sim.github.io/teaser.jpg">
+
+    <meta name="description"
+        content="A differentiable simulator for robotic cutting, enabling efficient inference of simulation parameters, and optimization of cutting motions.">
+    <meta name="author" content="Eric Heiden, Miles Macklin, Yashraj Narang, Animesh Garg, Dieter Fox, Fabio Ramos">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+
+    <title>Probabilistic Differentiable Simulation</title>
+
+    <style>
+        div.authors p:first-of-type {
+            font-size: 1.4em;
+        }
+
+        div.authors p {
+            text-align: center;
+        }
+
+        div.affiliations p {
+            text-align: center;
+        }
+
+        h1,
+        h2 {
+            margin: 1em 0;
+            text-align: center;
+        }
+
+        a:link {
+            text-decoration: none;
+        }
+
+        #video {
+            text-align: center;
+        }
+
+        div.container {
+            padding-top: 60px;
+        }
+
+        .navbar {
+            padding: 0.4em 2em;
+        }
+
+        #abstract p {
+            text-align: justify;
+        }
+
+        #results .label {
+            margin-top: 1em;
+            margin-bottom: 0.3em;
+            font-weight: bold;
+        }
+
+        #results h3,
+        #results h5 {
+            margin-top: 2em;
+        }
+
+        .btn {
+            width: 75%;
+        }
+
+        .actions .col {
+            text-align: center;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.18/dist/katex.min.css"
+        integrity="sha384-zTROYFVGOfTw7JV7KUu8udsvW2fx4lWOsCEDqhBreBwlHI4ioVRtmIvEThzJHGET" crossorigin="anonymous">
+
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.18/dist/katex.min.js"
+        integrity="sha384-GxNFqL3r9uRJQhR+47eDxuPoNE7yLftQM8LcxzgS4HT73tp970WS/wV5p8UzCOmb"
+        crossorigin="anonymous"></script>
+
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.18/dist/contrib/auto-render.min.js"
+        integrity="sha384-vZTG03m+2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl"
+        crossorigin="anonymous"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            renderMathInElement(document.body, {
+                // customised options
+                // • auto-render specific keys, e.g.:
+                delimiters: [
+                    { left: '$$', right: '$$', display: true },
+                    { left: '$', right: '$', display: false },
+                    { left: '\\(', right: '\\)', display: false },
+                    { left: '\\[', right: '\\]', display: true }
+                ],
+                // • rendering keys, e.g.:
+                throwOnError: false
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-md navbar-light fixed-top bg-light">
+        <a class="navbar-brand" href="#">Probabilistic Differentiable Simulation (PDS)</a>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse justify-content-end position-relative" id="navbarToggle">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#" target="_self">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#abstract" target="_self">Abstract</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#video" target="_self">Video</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#appendix" target="_self">Appendix</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#acknowledgements" target="_self">Acknowledgements</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <h1>Probabilistic Inference of Simulation Parameters via <br /> Parallel Differentiable Simulation</h1>
+
+        <h2>ICRA 2022 (Under Review)</h2>
+
+        <div class="row authors">
+            <div class="col">
+                <p>
+                    <a href="https://eric-heiden.com">Eric Heiden</a><sup>1</sup>
+                </p>
+            </div>
+            <div class="col">
+                <p>
+                    <a href="https://www.linkedin.com/in/chris-denniston-81359a90/">Christopher E.
+                        Denniston</a><sup>1</sup>
+                </p>
+            </div>
+            <div class="col">
+                <p>
+                    <a href="https://dmillard.github.io">David Millard</a><sup>1</sup>
+                </p>
+            </div>
+            <div class="col">
+                <p>
+                    <a href="https://fabioramos.github.io">Fabio Ramos</a><sup>2,3</sup>
+                </p>
+            </div>
+            <div class="col">
+                <p>
+                    <a href="http://robotics.usc.edu/~gaurav/">Gaurav S. Sukhatme</a><sup>1,4</sup>
+                </p>
+            </div>
+        </div>
+        <div class="row affiliations">
+            <div class="col">
+                <p><sup>1</sup>University of Southern California</p>
+            </div>
+            <div class="col">
+                <p><sup>2</sup>NVIDIA</p>
+            </div>
+            <div class="col">
+                <p><sup>3</sup>University of Sydney</p>
+            </div>
+            <div class="col">
+                <p><sup>4</sup>Amazon</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="summary">
+        <div class="row">
+            <figure class="figure">
+                <img class="figure-img img-fluid p-5" src="img/pds_diagram.svg" alt="PDS" />
+                <figcaption class="figure-caption">We reduce the reality gap in robotics simulators by introducing a
+                    Bayesian inference approach named <em>Constrained Stein Variational Gradient Descent</em> (CSVGD).
+                    Through a
+                    multiple-shooting likelihood model for trajectories, and by leveraging parallel differentiable
+                    simulators, CSVGD can infer complex, non-parametric posterior distributions over simulation
+                    parameters for highly nonlinear systems.</figcaption>
+            </figure>
+            <!-- <div class="col-2">
+                <video autoplay muted loop class="img-fluid">
+                    <source src="apple_springs_damage.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div> -->
+        </div>
+    </div>
+
+    <div class="container" id="abstract">
+        <div class="row">
+            <h2>Abstract</h2>
+            <!-- <p class="col-sm-10 fs-5"> -->
+            <p>
+                To accurately reproduce measurements from the real world, simulators need to have an adequate model of
+                the physical system and require the parameters of the model be identified.
+            </p>
+            <p>
+                We address the latter problem of estimating parameters through a Bayesian inference approach that
+                approximates a posterior distribution over simulation parameters given real sensor measurements.
+                By extending the commonly used Gaussian likelihood model for trajectories via the
+                <em>multiple-shooting</em> formulation, our chosen particle-based inference algorithm <em>Stein
+                    Variational Gradient
+                    Descent</em> is able to identify highly nonlinear, underactuated systems. We leverage GPU code
+                generation
+                and differentiable simulation to evaluate the likelihood and its gradient for many particles in
+                parallel.
+            </p>
+            <p>
+                Our algorithm infers non-parametric distributions over simulation parameters more accurately than
+                comparable baselines and handles constraints over parameters efficiently through gradient-based
+                optimization. We evaluate estimation performance on several physical experiments. On an underactuated
+                mechanism where a 7-DOF robot arm excites an object with an unknown mass configuration, we demonstrate
+                how our inference technique can identify symmetries between the parameters and provide highly accurate
+                predictions.
+            </p>
+            <div class="card col align-self-center border-0">
+                <a href="">
+                    <img src="paper-thumbnail.png" class="card-img-top" alt="PDS paper" />
+                    <div class="card-body" align="center">
+                        <h5 class="card-title">Paper on ArXiv</h5>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- <div class="row actions">
+            <div class="col"><a href="" target="_blank"
+                    class="btn btn-primary ">Paper</a></div>
+            <div class="col"><a href="#" class="btn btn-primary col">Code (coming soon!)</a></div>
+            <div class="col"><a href="#" data-bs-toggle="modal" data-bs-target="#citationModal"
+                    class="btn btn-primary col">Citation</a></div>
+        </div> -->
+    </div>
+
+    <div class="modal fade" id="citationModal" tabindex="-1" role="dialog" aria-labelledby="citationModalTitle">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="citationModalLongTitle">Citation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <pre>
+@article{heiden2021pds, ... }
+                    </pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="video">
+        <h2>Video <span style="color:#f00">(to be replaced by YouTube video with our names revealed)</span></h2>
+        <div class="row justify-content-md-center">
+            <div style="padding:56.25% 0 0 0;position:relative;"><iframe
+                    src="https://player.vimeo.com/video/567783951?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;h=357bbb645d"
+                    frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen
+                    style="position:absolute;top:0;left:0;width:100%;height:100%;" title="CoRL Submission"></iframe>
+            </div>
+            <script src="https://player.vimeo.com/api/player.js"></script>
+        </div>
+    </div>
+
+    <div class="container" id="appendix">
+        <h2>Appendix</h2>
+
+        <p>
+            The following sections provide additional technical details that supplement our paper. Please consult our
+            paper for the definition of the symbols used in the following sections.
+        </p>
+
+        <!-- \gdef\bmat#1{\begin{bmatrix} #1 \end{bmatrix}} -->
+        $
+        \gdef\paramdim{M}
+        \gdef\params{\theta}
+        \gdef\particles{\Theta}
+        \gdef\numparticles{N}
+        \gdef\statedim{D}
+        \gdef\statevec{\mathbf{s}}
+        \gdef\controlvec{\mathbf{u}}
+        \gdef\observationdim{N}
+        \gdef\observationvec{\mathbf{x}}
+        \gdef\timedim{T}
+        \gdef\trajectory{\mathcal{X}}
+        \gdef\trajectoryset{D_\trajectory}
+        \gdef\trajectorysetsub[1]{D_{\trajectory,#1}}
+        \gdef\particleset{\xi}
+        \gdef\simu{^{\text{sim}}}
+        \gdef\real{^{\text{real}}}
+        \gdef\fsim{f_{\text{sim}}}
+        \gdef\fobs{f_{\text{obs}}}
+        \gdef\fstep{f_{\text{step}}}
+        \gdef\pobs{p_{\text{obs}}}
+
+        \gdef\xp{\params^\prime}
+        \gdef\kxx{k(\params, \xp)}
+        \gdef\logprob{\log \mathcal{L}(\params)}
+        \gdef\logprobp{\log \mathcal{L}(\xp)}
+
+        \gdef\gradx{\nabla_{\params}}
+        \gdef\gradxp{\nabla_{\xp}}
+        \gdef\gradxxp{\nabla_{\params\xp}}
+
+        \gdef\exparams{\bar{\params}}
+
+        \gdef\jointpos{\mathbf{q}}
+        \gdef\jointvel{\mathbf{\dot{q}}}
+        \gdef\jointacc{\mathbf{\ddot{q}}}
+        \gdef\jointtorque{\tau}
+        \gdef\externalforce{\mathbf{f}^{\text{ext}}}
+        \gdef\timestep{\Delta t}
+
+        \gdef\pdef{p_{\text{def}}}
+        \gdef\plim{p_{\text{lim}}}
+
+        \gdef\second{\text{s}}
+        \gdef\kg{\text{kg}}
+        \gdef\meter{\text{m}}
+        \gdef\Hz{\text{Hz}}
+        $
+
+
+        <h3>Likelihood Model for Sets of Trajectories</h3>
+
+        <p>
+            In this work we assume that trajectories may have been generated by a distribution over parameters.
+            In the case of a replicable experimental setup, this could be a point distribution at the only true
+            parameters.
+            However, when trajectories are collected from multiple robots, or with slightly different experimental
+            setups between experiments}, there may be a multimodal distribution over parameters which generated the set
+            of trajectories.
+        </p>
+        <p>
+            Note, that irrespective of the choice of likelihood function we do not make any assumption about the shape
+            of the posterior distribution by leveraging SVGD which is a non-parametric inference algorithm. In
+            trajectory space, the Gaussian likelihood function is a common choice as it corresponds to the typical
+            least-squares estimation methodology. Other likelihood distributions may be integrated with our method,
+            which we leave up to future work.
+        </p>
+        <p>
+            The likelihood which we use is a mixture of equally-weighted Gaussians centered at each reference
+            trajectory $\trajectory\real$:
+            $$
+            \begin{equation}
+            p_{sum} (\trajectoryset\real | \params) = \sum_{\trajectory\real \in \trajectoryset\real}
+            p_{ss}(\trajectory\real | \params).
+            \end{equation}
+            $$
+
+            If we were to consider each trajectory as an independent sample from the same trajectory distribution (the
+            product), the likelihood function would be
+            $$\begin{equation}
+            p_{product} (\trajectoryset\real | \params) = \prod_{\trajectory\real \in \trajectoryset\real}
+            p_{ss}(\trajectory\real | \params).
+            \end{equation}$$
+
+            While both equations define the likelihood for
+            a combination of single-shooting likelihood functions $p_{ss}$ for a set of real trajectories
+            $\trajectoryset\real$, the same combination operators (sum or product) apply to the combination of
+            multiple-shooting likelihood functions $p_{ms}$ analogously.
+        </p>
+        <p>
+            The consequence of using these likelihoods can be seen in the following figure where
+            $p_{product}$ shows the resulting posterior distribution (in parameter space) when
+            treating a set of trajectories as independent and taking the product of their likelihoods
+            (\autoref{eq:traj_likelihood_prod}), while \autoref{fig:double-pendulum-sum} shows the result of treating
+            them as a sum of Gaussian likelihoods (\autoref{eq:traj_likelihood_sum}).
+            In \autoref{fig:double-pendulum-prod} the posterior becomes the average of the two distributions since that
+            is the most likely position that generated both of the distinct trajectories. In contrast, the posterior
+            approximated by the same algorithm (CSVGD) but using the sum of Gaussian likelihoods, successfully captures
+            the multimodality in the trajectory space since most particles have aligned near the two modes of the true
+            distribution in parameter space.
+
+        </p>
+
+        <div class="row">
+            <div class="col"></div>
+            <div class="col-4">
+                <img class="img-fluid" src="img/double_pendulum/combination_mean.png" />
+                <p align="center">(a) Product</p>
+            </div>
+            <div class="col-4">
+                <img class="img-fluid" src="img/double_pendulum/combination_logsumexp.png" />
+                <p align="center">(b) Sum</p>
+            </div>
+            <div class="col"></div>
+        </div>
+
+        <div class="row">
+            <div class="col"></div>
+            <div class="col-8">
+                <p align="justify">
+                    Comparison of posterior parameter distributions obtained from fitting the parameters to two
+                    ground-truth trajectories generated from different link lengths of a simulated double pendulum
+                    (units of the axes in meters). The trajectories were 300 steps long (which corresponds to a length
+                    of 3s) and contain the 2 joint positions and 2 joint velocities of the uncontrolled
+                    double pendulum which starts from a zero-velocity initial configuration where the first angle is at
+                    $90^\circ$ (sideways) and the other at $0^\circ$. In (a), the product of the individual
+                    per-trajectory likelihoods is maximized (Equation 2). In (b), the sum
+                    of the likelihoods is maximized (Equation 1).
+                </p>
+            </div>
+            <div class="col"></div>
+        </div>
+
+        <h3>State and Parameter Normalization</h3>
+
+        <p>
+            The parameters we are estimating are valid over only particular ranges of values. These ranges are often
+            widely different - in the case of our real-world pendulum experiment, the center of mass of a link in a
+            pendulum may be in the order of centimeters, while the angular velocity at the beginning of the recorded
+            motion can reach values on the orders of meters per second. It is therefore important to scale the
+            parameters to a common range to avoid any dimension to dominate smaller parameter ranges during the
+            estimation.
+        </p>
+        <p>
+            Similarly, the state dimensions are of different units - for example, we typically include velocities and
+            positions in the recorded data over which we compute the likelihood. Therefore, we also normalize the range
+            over the state dimensions. Given the state vector, respective parameter vector, $w$, we normalize each
+            dimension $i$ by its statistical variance $\sigma^2$, i.e. $\frac{w_i}{\sigma_i^2}$.
+        </p>
+
+        <h3>KNN-based Approximation for KL Divergence</h3>
+        <p>
+            In this work, we compare a set of parameter guesses (particles) to the ground-truth parameters, or a set of
+            trajectories generated by simulating trajectories from each parameter in the particle distribution to a set
+            of trajectories created on a physical system.
+            To compare these distributions, we use the KL divergence to determine how the two distributions differ from
+            each other.
+            Formally, the KL divergence is the expected value of the log likelihood ratio between two distributions, and
+            is an asymmetric divergence that does not satisfy the triangle inequality.
+        </p>
+        <p>
+            The KL divergence is easily computable in the case of discrete distributions or simple parametric
+            distributions, but is not easily calculable for samples from non-parametric distributions such as those over
+            trajectories.
+            Instead, we use an approximation to the KL divergence which uses the relative distances between samples in a
+            set to estimate the KL divergence between particle distributions.
+            This method has been used to compare particle distributions over robot poses to asses the performance of
+            particle filter distributions~\cite{chou_performance_2011}.
+            To estimate the KL divergence between particle distributions over trajectories $\trajectoryset^{p}$ and
+            $\trajectoryset^{q}$ we adopt the formulation from~\cite{wang_divergence_2009, chou_performance_2011}:
+            $$
+            \begin{equation}
+            \tilde{d}_{KL} (\trajectoryset^{p} \parallel \trajectoryset^{q}) =
+            \frac{\observationdim}{|\trajectoryset^p|} \sum_{i=1}^{|\trajectoryset^p|}
+            \log\frac{\operatorname{KNN}^p_{k_i}(i)}{\operatorname{KNN}^q_{l_i}(i)}+ \frac{1}{|\trajectoryset^p|}
+            \sum_{i=1}^{|\trajectoryset^p|} [\psi(l_i) - \psi(k_i)] +
+            \log\frac{|\trajectoryset^q|}{|\trajectoryset^p|-1},
+            \end{equation}
+            $$
+            where $\observationdim$ is the dimensionality of the trajectories, $|\trajectoryset^p|$ is the number of
+            trajectories in the $\trajectoryset^{p}$ dataset, $|\trajectoryset^q|$ is the number of particles in the
+            $\trajectoryset^{q}$ dataset, $\operatorname{KNN}^p_{k_i}(i)$ is the distance from trajectory $\trajectory_i
+            \in \trajectoryset^{p}$ to its $k_i$-th nearest neighbor in $\trajectoryset^{q}$,
+            $\operatorname{KNN}^q_{l_i}(i)$ is the distance from trajectory $\trajectory_i \in \trajectoryset^{p}$ to
+            its $l_i$-th nearest neighbor in $\trajectoryset^{p} \backslash \trajectory_i$, and $\psi$ is the digamma
+            function. Note that this approximation of KL divergence can also be applied to compare parameter
+            distributions, as we show in the synthetic data experiment from subsection 5.1 of our main paper (cf. Figure
+            4 (a) and (b) from the main paper) where the ground-truth parameter distribution is known.
+        </p>
+        <p>
+            Throughout this work, we set $k_i$ and $l_i$ to 3 as this reduces the bias in the approximation, but does
+            not require a large amount of samples from the ground-truth distribution.
+        </p>
+
+        <h3>Experiments</h3>
+        <p>We provide further technical details and results from the experiments we present in the main paper.</p>
+
+        <h4>Differentiable Simulator</h4>
+
+        <p>
+            Other than requiring a differentiable forward dynamics model which allows to simulate the system in its
+            entirety following the Markov assumption, our proposed algorithm does not rely on a particular choice of
+            dynamical system or simulator for which its parameters need to be estimated.
+            For our experiments, we use the <em><a
+                    href="https://github.com/google-research/tiny-differentiable-simulator" target="_blank">Tiny
+                    Differentiable Simulator</a></em>~\cite{heiden2021neuralsim} that implements end-to-end
+            differentiable contact models and the Articulated Body Algorithm (ABA)~\cite{featherstone2007rbda} to
+            compute the forward dynamics (FD) for articulated rigid-body mechanisms. Given joint positions $\jointpos$,
+            velocities $\jointvel$, torques $\jointtorque$ in generalized coordinates, and external forces
+            $\externalforce$, ABA calculates the joint accelerations $\jointacc$.
+            We use semi-implicit Euler integration to advance the system dynamics in time for a time step $\Delta t$:
+            $$
+            \begin{align}
+            \jointacc_{t+1} = \operatorname{ABA}(\jointpos_t, \jointvel_t, \jointtorque_t, \externalforce_t; \params),
+            \qquad
+            \jointvel_{t+1} = \jointvel_t + \jointacc_{t+1} \timestep, \qquad
+            \jointpos_{t+1} = \jointpos_t + \jointvel_{t+1} \timestep.
+            \end{align}
+            $$
+        </p>
+        <p>
+            The second-order ODE described by \autoref{eq:dynamics} is lowered to a first-order system, with state
+            $\statevec_t = \begin{bmatrix}\jointpos_t & \jointvel_t\end{bmatrix}$. Furthermore, we deal primarily with
+            the discrete
+            time-stepped dynamics function
+            $\statevec_{t+1} = \fstep(\statevec_t, t, \params)$,
+            assuming that $\timestep$ is constant. The function $\fsim(\params, \statevec_0)$ uses $\fstep$ iteratively
+            to produce a trajectory of states $[\statevec]_{t=1}^T$ given an initial state $\statevec_0$ and the
+            parameters $\params$. Many systems of practical interest for robotics are controlled by an external input.
+            In our formulation for parameter estimation, we include controls as explicit dependencies on the time
+            parameter $t$.
+        </p>
+        <p>
+            For an articulated rigid body system, the parameters $\params$ may include (but are not limited to) the
+            masses, inertial properties and geometrical properties of the bodies in the mechanism, as well as joint and
+            contact friction coefficients. Given $\frac{\partial \fstep}{\partial\params}$ and
+            $\frac{\partial\fstep}{\partial\statevec}$, gradients of simulation parameters with respect to the state
+            trajectories can be computed directly through the chain rule, or via the adjoint sensitivity
+            method~\cite{pontryagin2018mathematical}.
+        </p>
+
+
+        <h4>Identify Real-world Double Pendulum</h4>
+        <p>
+            We set up the double pendulum estimation experiment with the 11 parameters shown in
+            \autoref{tab:params-ibm-pendulum} to be estimated. The state space consists of the two positions and
+            velocities of both joints: $\statevec = \begin{bmatrix}\mathbf{q}_{0:1} &
+            \mathbf{\dot{q}}_{0:1}\end{bmatrix}$. The dataset of
+            trajectories contains image sequences (see time lapse of an excerpt from a trajectory in
+            \autoref{tab:dataset-ibm-pendulum}) and annotated pixel coordinates of the three vertices in the double
+            pendulum, from which we extracted joint positions and velocities (via finite differencing given the known
+            recording frequency of 400Hz).
+
+        </p>
+        <p>
+            Since we know that all trajectories in this dataset stem from the same double
+            pendulum~\cite{asseman2018learning}, we only used a single reference trajectory as target trajectory
+            $\trajectory\real$ during the estimation. We let each estimator run for 2000 iterations. For evaluation, we
+            calculate the consistency metrics from Tab.~1 of the main paper over 10 held-out trajectories from a test
+            dataset. For comparison, we visualize the trajectory density over simulations rolled out from the last 100
+            Markov samples (or 100 particles in the case of particle-based approaches) in
+            \autoref{fig:ibm-pendulum-rollouts}. The ground-truth shown in these plots again stems from the unseen test
+            dataset. This experiment further demonstrates the generalizability of simulation-based inference, which,
+            when an adequate model has been implemented and its parameters identified, can predict outcomes under
+            various novel conditions even though the training dataset consisted of only a single trajectory in this
+            example.
+        </p>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Link</th>
+                    <th scope="col">Parameter</th>
+                    <th scope="col" colspan="2" align="center">Minimum</th>
+                    <th scope="col" colspan="2" align="center">Maximum</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th rowspan="5">Link 1</th>
+                    <th>Mass</th>
+                    <td align="right">0.05 </td>
+                    <td> $\kg$ </td>
+                    <td align="right"> 0.5 </td>
+                    <td> $\kg$ </td>
+                </tr>
+                <tr>
+                    <th> $I_{xx}$ </th>
+                    <td align="right"> 0.002 </td>
+                    <td> $\kg\cdot\meter^2$ </td>
+                    <td align="right"> 1.0 </td>
+                    <td> $\kg\cdot\meter^2$</td>
+                </tr>
+                <tr>
+                    <th> COM $x$ </th>
+                    <td align="right"> -0.2 </td>
+                    <td> $\meter$ </td>
+                    <td align="right"> 0.2 </td>
+                    <td> $\meter$ </td>
+                </tr>
+                <tr>
+                    <th> COM $y$ </th>
+                    <td align="right"> -0.2 </td>
+                    <td> $\meter$ </td>
+                    <td align="right"> 0.2 </td>
+                    <td> $\meter$ </td>
+                </tr>
+                <tr>
+                    <th> Joint friction </th>
+                    <td align="right"> 0.0 </td>
+                    <td> </td>
+                    <td align="right"> 0.5 </td>
+                    <td> </td>
+                </tr>
+                <hr />
+                <tr>
+                    <th rowspan="6">Link 2
+                    <th>Length </th>
+                    <td align="right"> 0.08 </td>
+                    <td> $\meter$ </td>
+                    <td align="right"> 0.3 </td>
+                    <td> $\meter$ </td>
+                </tr>
+                <tr>
+                    <th> Mass </th>
+                    <td align="right"> 0.05 </td>
+                    <td> $\kg$ </td>
+                    <td align="right"> 0.5 </td>
+                    <td> $\kg$ </td>
+                </tr>
+                <tr>
+                    <th> $I_{xx}$ </th>
+                    <td align="right"> 0.002 </td>
+                    <td> $\kg\cdot\meter^2$ </td>
+                    <td align="right"> 1.0 </td>
+                    <td> $\kg\cdot\meter^2$ </td>
+                </tr>
+                <tr>
+                    <th> COM $x$ </th>
+                    <td align="right"> -0.2 </td>
+                    <td> $\meter$ </td>
+                    <td align="right"> 0.2 </td>
+                    <td> $\meter$ </td>
+                </tr>
+                <tr>
+                    <th> COM $y$ </th>
+                    <td align="right"> -0.2 </td>
+                    <td> $\meter$ </td>
+                    <td align="right"> 0.2 </td>
+                    <td> $\meter$ </td>
+                </tr>
+                <tr>
+                    <th> Joint friction </th>
+                    <td align="right"> 0.0 </td>
+                    <td> </td>
+                    <td align="right"> 0.5 </td>
+                    <td> </td>
+                </tr>
+            </tbody>
+        </table>
+        <p><b>Table 1.</b> Parameters to be estimated. $I$ refers to the $3\times3$ inertia matrix, COM stands for
+            center of mass.</p>
+
+
+        <h4>Ablation Study on Multiple Shooting</h4>
+
+        <p>
+            We evaluate the baseline estimation algorithms with our proposed multiple-shooting likelihood function
+            (using
+            10 shooting windows) on the physical double pendulum dataset from before. To make the constrained
+            optimization problem amenable to the MCMC samplers, we formulate the defect constraint through the following
+            likelihood:
+            $$
+            \begin{align}
+            \pdef(\statevec_t^s, \statevec_t) = \mathcal{N}(\statevec_t^s | \statevec_t,\sigma^2_{\text{def}}) \qquad
+            t\in [h, 2h, \dots],
+            \end{align}
+            $$
+            where we tune $\sigma^2_{\text{def}}$ to a small value (on the order of $10^{-2}$) such that the defects are
+            minimized during the estimation. As we describe in Sec. 4.4 from our main paper, the parameter space is
+            augmented by the shooting variables $\statevec_t^s$.
+        </p>
+        <p>
+            As shown in \autoref{tab:ms-baselines}, the MCMC approaches Emcee and NUTS do not benefit meaningfully from
+            the multiple-shooting approach. Emcee often yields unstable simulations from which we are not able to
+            compute some of the metrics. The increased dimensionality of the parameter space appears to add a
+            significant challenge to these methods, which are known to scale poorly to higher dimensions.
+            Despite being configured to use a Gaussian mixture model of 3 kernels, the CEM posterior immediately
+            collapses to a single point such that the KL divergence of simulated against real trajectories cannot be
+            computed.
+        </p>
+        <p>
+            We observe a significant improvement in estimation accuracy on SGLD, where the multiple-shooting approach
+            allowed it to converge to closely matching trajectories, as shown in \autoref{fig:sgld-ms}. As with SVGD,
+            the availability of gradients allows this method to scale better to the higher dimensional parameter space,
+            while the smoothed likelihood landscape further helps the approach to find better fitting parameters.
+        </p>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col" colspan="2" align="center">$d_{\text{KL}} (\trajectoryset\real \parallel
+                        \trajectoryset\simu)$</th>
+                    <th scope="col" colspan="2" align="center">$d_{\text{KL}} (\trajectoryset\simu \parallel
+                        \trajectoryset\real)$</th>
+                    <th scope="col" colspan="2" align="center">MMD</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th>Algorithm</th>
+                    <th>SS</th>
+                    <th>MS</th>
+                    <th>SS</th>
+                    <th>MS</th>
+                </tr>
+                <tr>
+                    <th> Emcee </th>
+                    <td> \bf 8542.2466 </td>
+                    <td> 8950.4574 </td>
+                    <td> 4060.6312 </td>
+                    <td>N/A </td>
+                    <td> 1.1365 </td>
+                    <td> N/A </td>
+                </tr>
+                <tr>
+                    <th> CEM </th>
+                    <td> 8911.1798 </td>
+                    <td> \bf 8860.5115 </td>
+                    <td> 8549.5927 </td>
+                    <td>N/A </td>
+                    <td> 0.9687 </td>
+                    <td> \bf 0.5682 </td>
+                </tr>
+                <tr>
+                    <th> SGLD </th>
+                    <td> 8788.0962 </td>
+                    <td> \bf 5863.2728 </td>
+                    <td> 7876.0310 </td>
+                    <td>\bf 2187.2825 </td>
+                    <td> 2.1220 </td>
+                    <td> \bf 0.0759 </td>
+                </tr>
+                <tr>
+                    <th> NUTS </th>
+                    <td> 9196.7461 </td>
+                    <td> \bf 8785.5326 </td>
+                    <td> 6432.2131 </td>
+                    <td>\bf 4935.8983 </td>
+                    <td> \bf 0.5371 </td>
+                    <td> 1.1642 </td>
+                </tr>
+                <tr>
+                    <th> (C)SVGD </th>
+                    <td> 8803.5683 </td>
+                    <td> \bf 5204.5336 </td>
+                    <td> 10283.6659</td>
+                    <td> \bf 2773.1751 </td>
+                    <td> 0.7177 </td>
+                    <td> \bf 0.0366 </td>
+                </tr>
+            </tbody>
+        </table>
+        <p><b>Table 2.</b> Consistency metrics of the posterior distributions approximated from the physical double
+            pendulum dataset (\autoref{sec:ibm-pendulum}) by the different estimation algorithms using the
+            single-shooting likelihood $p_{ss}(\trajectory\real | \params)$ (column ``SS'') and the multiple-shooting
+            likelihood $p_{ms}(\trajectory\real | \params)$ (column ``MS'') with 10 shooting windows. Note that SVGD
+            with multiple-shooting corresponds to CSVGD.</p>
+    </div>
+
+    <div class="container" id="acknowledgements">
+        <h2>Acknowledgements</h2>
+
+        <p class="lead">This work was supported by a Google PhD Fellowship and a NASA Space Technology Research
+            Fellowship, grant number 80NSSC19K1182.</p>
+        <p class="lead">G.S. Sukhatme holds concurrent appointments as a Professor at USC and as an Amazon Scholar. This
+            paper describes work performed at USC and is not associated with Amazon.</p>
+    </div>
+
+    <div class="bg-light">
+        <div class="container" align="right" style="padding:40px 0">
+            Last updated on September 14, 2021
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
